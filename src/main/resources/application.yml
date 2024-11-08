@@ -1,0 +1,47 @@
+server:
+  port: 9875
+
+spring:
+  profiles:
+    active: dev
+  main:
+    allow-circular-references: true
+  datasource:
+    druid:
+      driver-class-name: ${isljq.datasource.driver-class-name}
+      url: jdbc:mysql://${isljq.datasource.host}:${isljq.datasource.port}/${isljq.datasource.database}?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=CONVERT_TO_NULL&useSSL=false&allowPublicKeyRetrieval=true
+      username: ${isljq.datasource.username}
+      password: ${isljq.datasource.password}
+#  redis:
+#    host: 192.168.200.130
+#    port: 6379
+#    database: 2
+#    password: ""
+
+mybatis:
+  #mapper配置文件
+  mapper-locations: classpath:com/zzuli/mapper/*.xml
+  type-aliases-package: com.zzuli.pojo
+  configuration:
+    #开启驼峰命名
+    map-underscore-to-camel-case: true
+
+logging:
+  level:
+    com:
+      zzuli: debug
+
+#zzuli:
+#  jwt:
+#    # 设置jwt签名加密时使用的秘钥
+#    admin-secret-key: itcast
+#    # 设置jwt过期时间
+#    admin-ttl: 7200000
+#    # 设置前端传递过来的令牌名称
+#    admin-token-name: token
+#    # 设置前端传递过来的令牌名称
+#    user-secret-key: zzuli
+#    user-ttl: 7200000
+#    user-token-name: authentication
+
+
