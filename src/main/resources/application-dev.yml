@@ -3,6 +3,6 @@ isljq:
     driver-class-name: com.mysql.cj.jdbc.Driver
     host: 192.168.200.130
     port: 3306
-    database: lerderboard
+    database: test
     username: root
     password: '01010111'
