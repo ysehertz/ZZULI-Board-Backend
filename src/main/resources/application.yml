@@ -21,10 +21,11 @@ spring:
 mybatis:
   #mapper配置文件
   mapper-locations: classpath:com/zzuli/mapper/*.xml
-  type-aliases-package: com.zzuli.pojo
+  type-aliases-package: zzuli.pojo
   configuration:
     #开启驼峰命名
     map-underscore-to-camel-case: true
+    
 
 logging:
   level:

@@ -25,7 +25,7 @@ import java.util.Map;
  * @createTime 2024/11/9
  */
 @RestController
-@RequestMapping("/admin")
+@RequestMapping("/api/admin")
 @Slf4j
 public class AdminController {
     @Autowired
