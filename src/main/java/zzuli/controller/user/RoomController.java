@@ -21,12 +21,20 @@ import java.util.List;
  * @createTime 2024/11/10
  */
 
+/**
+ * 考场信息
+ */
 @RestController
 @RequestMapping("/api/room")
 public class RoomController {
     @Autowired
     private RoomService roomService;
 
+    /**
+     * 获取考场列表
+     * @param contestId
+     * @return
+     */
     @RequestMapping("/list")
     public Result<List<RoomVO>> list(@RequestParam(name = "contest_id") String contestId) {
         return Result.success(roomService.list(contestId));

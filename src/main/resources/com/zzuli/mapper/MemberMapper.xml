@@ -1,8 +1,41 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="zzuli.mapper.MemberMapper">
+    <update id="setMember">
+        UPDATE members
+        <set>
+            <if test="setMemberDTO.id != null">member_id = #{setMemberDTO.id},</if>
+            <if test="setMemberDTO.name != null">member_name = #{setMemberDTO.name},</if>
+            <if test="setMemberDTO.school != null">member_school = #{setMemberDTO.school},</if>
+            <if test="setMemberDTO.collage != null">member_collage = #{setMemberDTO.collage},</if>
+            <if test="setMemberDTO.class != null"> member_class = #{setMemberDTO.clazz},</if>
+            <if test="setMemberDTO.room_id != null">room_id = #{setMemberDTO.room_id},</if>
+            <if test="setMemberDTO.official != null">official = #{setMemberDTO.official},</if>
+        </set>
+        WHERE contest_id = #{contestId} AND member_id = #{memberId}
+    </update>
+
+    <update id="upRoomIdToNull">
+        UPDATE members
+        SET room_id = NULL
+        WHERE room_id = #{roomId}
+    </update>
+
+    <delete id="delMember">
+        DELETE FROM members
+        WHERE contest_id = #{contestId} AND member_id = #{memberId}
+    </delete>
+    <delete id="delMemberByTeamId">
+        DELETE FROM members
+        WHERE team_id = #{teamId}
+    </delete>
+    <delete id="deleteMemberByContestID">
+        DELETE FROM members
+        WHERE contest_id = #{contestId}
+    </delete>
 
     <select id="list" resultType="zzuli.pojo.entity.Member">
         select * from members
     </select>
+
 </mapper>

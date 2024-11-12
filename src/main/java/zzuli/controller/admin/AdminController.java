@@ -16,16 +16,20 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * ClassName: MenberController
+ * ClassName: AdminController
  * Package: zzuli.controller.admin
- * Description:
+ * Description: 管理员控制器
  *
  * @author fuchen
  * @version 1.0
  * @createTime 2024/11/9
  */
+
+/**
+ * 管理员
+ */
 @RestController
-@RequestMapping("/api/admin")
+@RequestMapping("/api")
 @Slf4j
 public class AdminController {
     @Autowired
@@ -33,6 +37,11 @@ public class AdminController {
     @Autowired
     private JwtProperties jwtProperties;
 
+    /**
+     * 管理员登录
+     * @param adminDTO
+     * @return
+     */
     @PostMapping("/login")
     public Result<AdminLoginVO> login(@RequestBody AdminLoginDTO adminDTO) {
         log.info("管理员登录：{}", adminDTO);

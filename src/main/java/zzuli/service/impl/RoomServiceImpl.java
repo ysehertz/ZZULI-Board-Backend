@@ -3,9 +3,12 @@ package zzuli.service.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import zzuli.mapper.MemberMapper;
 import zzuli.mapper.RoomMapper;
+import zzuli.pojo.dto.SetRoomDTO;
 import zzuli.pojo.entity.Room;
 import zzuli.pojo.vo.RoomVO;
+import zzuli.service.MemberService;
 import zzuli.service.RoomService;
 
 import java.util.List;
@@ -24,6 +27,8 @@ import java.util.stream.Collectors;
 @Service
 public class RoomServiceImpl implements RoomService {
     @Autowired
+    private MemberMapper memberMapper;
+    @Autowired
     private RoomMapper roomMapper;
 
     @Override
@@ -37,5 +42,42 @@ public class RoomServiceImpl implements RoomService {
                     .build()).collect(Collectors.toList());
         }
         return null;
+    }
+
+    /**
+     * 删除考场及考场内的学生的考场信息
+     * @param roomId
+     */
+    @Override
+    public void deleteRoom(String roomId) {
+        //删除考场内学生的考场信息
+        memberMapper.upRoomIdToNull(roomId);
+       // 删除考场
+        roomMapper.deleteRoom(roomId);
+    }
+
+    /**
+     * 设置考场信息
+     * @param roomId
+     * @param setRoomDTO
+     */
+    @Override
+    public void setRoom(String roomId, SetRoomDTO setRoomDTO) {
+        roomMapper.setRoom(roomId, setRoomDTO);
+    }
+
+    @Override
+    public void createRoom(int roomId, SetRoomDTO setRoomDTO) {
+        Room room = Room.builder()
+                .roomId(roomId)
+                .roomSize(setRoomDTO.getSize())
+                .roomName(setRoomDTO.getName())
+                .build();
+        roomMapper.createRoom(room);
+    }
+
+    @Override
+    public void deleteRoomByContestID(String contestId) {
+        roomMapper.deleteRoomByContestID(contestId);
     }
 }

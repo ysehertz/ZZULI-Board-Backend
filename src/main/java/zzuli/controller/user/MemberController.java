@@ -21,6 +21,10 @@ import java.util.List;
  * @version 1.0
  * @createTime 2024/11/10
  */
+
+/**
+ * 成员信息
+ */
 @Slf4j
 @RequestMapping("/api/member")
 @RestController
@@ -28,6 +32,11 @@ public class MemberController {
     @Autowired
     private MemberService memberService;
 
+    /**
+     * 获取成员列表
+     * @param contestId
+     * @return
+     */
     @GetMapping("/list")
     public Result<List<MemberListVO>> list(@RequestParam(name = "contest_id") String contestId) {
         List<MemberListVO> memberVOList = memberService.list();

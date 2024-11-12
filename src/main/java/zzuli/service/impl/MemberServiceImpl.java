@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import zzuli.mapper.MemberMapper;
+import zzuli.pojo.dto.SetMemberDTO;
 import zzuli.pojo.entity.Member;
 import zzuli.pojo.vo.MemberListVO;
 import zzuli.service.MemberService;
@@ -42,5 +43,20 @@ public class MemberServiceImpl implements MemberService {
                     .build()).collect(java.util.stream.Collectors.toList());
         }
         return null;
+    }
+
+    @Override
+    public void setMember(String contestId, String memberId, SetMemberDTO setMemberDTO) {
+        memberMapper.setMember(contestId, memberId, setMemberDTO);
+    }
+
+    @Override
+    public void delMember(String contestId, String memberId) {
+        memberMapper.delMember(contestId, memberId);
+    }
+
+    @Override
+    public void deleteMemberByContestID(String contestId) {
+        memberMapper.deleteMemberByContestID(contestId);
     }
 }

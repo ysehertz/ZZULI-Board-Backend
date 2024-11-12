@@ -2,6 +2,7 @@ package zzuli.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import zzuli.common.result.Result;
+import zzuli.pojo.dto.CreateContestDTO;
 import zzuli.pojo.dto.RegisterTeamDTO;
 import zzuli.pojo.dto.SingleDTO;
 import zzuli.pojo.vo.ContestListVO;
@@ -30,4 +31,10 @@ public interface ContestService {
     RegisterTeamVO registerTeam(String contestId, RegisterTeamDTO registerTeamDTO);
 
     void registerSignal(String contestId, SingleDTO signalDTO);
+
+    void CreateContest(CreateContestDTO dto);
+
+    void deleteContest(String contestId);
+
+    void setContest(String contestId, CreateContestDTO dto);
 }

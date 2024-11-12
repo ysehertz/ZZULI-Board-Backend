@@ -10,6 +10,35 @@
         insert into members (team_id, contest_id,member_id,member_name,member_school,member_college,member_class,official) values
         (#{teamId}, #{contestId},#{memberId},#{memberName},#{memberSchool},#{memberCollege},#{memberClass},#{official});
     </insert>
+    <insert id="createContest">
+        insert into contests (contest_id, contest_type, PTASession, Jsession, title, reg_type,reg_start_time,reg_end_time,reg_off_code,reg_unoff_code,banner,penalty,frozen,frozen_time,balloon_color,school_list) values
+        (#{contestId}, #{contestType}, #{ptaSession}, #{jsession}, #{title}, #{regType}, #{regStartTime}, #{regEndTime}, #{regOffCode}, #{regUnoffCode}, #{banner}, #{penalty}, #{frozen}, #{frozenTime}, #{balloonColor}, #{schoolList});
+    </insert>
+    <update id="setContest">
+        update contests
+        <set>
+            <if test="DTO.id != null"> contests_id = #{DTO.id},</if>
+            <if test="DTO.type != null">contest_type = #{DTO.type},</if>
+            <if test="DTO.PTASession != null">PTASession = #{DTO.PTASession},</if>
+            <if test="DTO.jsession != null">Jsession = #{DTO.jsession},</if>
+            <if test="DTO.title != null">title = #{DTO.title},</if>
+            <if test="DTO.reg_Type != null">reg_type = #{DTO.reg_Type},</if>
+            <if test="DTO.reg_start_time != null">reg_start_time = #{DTP.reg_start_time},</if>
+            <if test="DTO.reg_end_time != null">reg_end_time = #{DTO.reg_end_time},</if>
+            <if test="DTO.reg_off_code != null">reg_off_code = #{DTO.reg_off_code},</if>
+            <if test="DTO.reg_unoff_code!= null">reg_unoff_code = #{DTO.reg_unoff_code},</if>
+            <if test="DTO.banner != null">banner = #{DTO.banner},</if>
+            <if test="DTO.penalty != null">penalty = #{DTO.penalty},</if>
+            <if test="DTO.frozen != null">frozen = #{DTO.frozen},</if>
+            <if test="DTO.frozen_time != null">frozen_time = #{DTO.frozen_time},</if>
+            <if test="DTO.balloon_color != null">balloon_color = #{DTO.balloon_color},</if>
+            <if test="DTO.school_list != null">school_list = #{DTO.school_list},</if>
+        </set>
+        where contest_id = #{contestId}
+    </update>
+    <delete id="deleteContest">
+        delete from contests where contest_id = #{contestId};
+    </delete>
 
 
     <select id="list" resultType="zzuli.pojo.entity.Contest">

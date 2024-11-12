@@ -14,6 +14,7 @@ import zzuli.common.constant.MessageConstant;
 import zzuli.common.exception.NoContestException;
 import zzuli.common.result.Result;
 import zzuli.mapper.ContestMapper;
+import zzuli.pojo.dto.CreateContestDTO;
 import zzuli.pojo.dto.MemberDTO;
 import zzuli.pojo.dto.RegisterTeamDTO;
 
@@ -207,5 +208,20 @@ public class ContestServiceImpl implements ContestService {
             contestMapper.saveMember(member);
         }
         throw new NoContestException(MessageConstant.NO_CONTEST);
+    }
+
+    @Override
+    public void CreateContest(CreateContestDTO dto) {
+        contestMapper.createContest(dto);
+    }
+
+    @Override
+    public void deleteContest(String contestId) {
+        contestMapper.deleteContest(contestId);
+    }
+
+    @Override
+    public void setContest(String contestId, CreateContestDTO dto) {
+        contestMapper.setContest(contestId, dto);
     }
 }

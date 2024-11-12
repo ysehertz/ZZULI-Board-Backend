@@ -3,6 +3,7 @@ package zzuli.mapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import zzuli.common.result.Result;
+import zzuli.pojo.dto.CreateContestDTO;
 import zzuli.pojo.entity.Contest;
 import zzuli.pojo.entity.Member;
 import zzuli.pojo.entity.Team;
@@ -30,4 +31,10 @@ public interface ContestMapper {
 
 
     void saveMember(Member member);
+
+    void createContest(CreateContestDTO dto);
+
+    void deleteContest(String contestId);
+
+    void setContest(String contestId, CreateContestDTO dto);
 }

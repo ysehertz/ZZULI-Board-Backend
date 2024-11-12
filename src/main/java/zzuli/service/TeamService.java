@@ -1,5 +1,6 @@
 package zzuli.service;
 
+import zzuli.pojo.dto.SetTeamDTO;
 import zzuli.pojo.vo.TeamListVO;
 
 import java.util.List;
@@ -15,4 +16,8 @@ import java.util.List;
  */
 public interface TeamService {
     List<TeamListVO> getListByContestId(String contestId);
+
+    void setTeam(String teamId, SetTeamDTO setTeamDTO);
+
+    void delTeam(String teamId);
 }

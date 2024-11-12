@@ -1,5 +1,6 @@
 package zzuli.service;
 
+import zzuli.pojo.dto.SetMemberDTO;
 import zzuli.pojo.vo.MemberListVO;
 
 import java.util.List;
@@ -16,4 +17,10 @@ import java.util.List;
 public interface MemberService {
 
     List<MemberListVO> list();
+
+    void setMember(String contestId, String memberId, SetMemberDTO setMemberDTO);
+
+    void delMember(String contestId, String memberId);
+
+    void deleteMemberByContestID(String contestId);
 }

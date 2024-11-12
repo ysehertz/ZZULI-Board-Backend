@@ -22,7 +22,7 @@ import java.util.List;
 public class Contest {
     private String contestId;
     private String PTASession;
-    private String Jesession;
+    private String jsession;
     private String contestType;
     private String title;
     private java.sql.Timestamp startTime;

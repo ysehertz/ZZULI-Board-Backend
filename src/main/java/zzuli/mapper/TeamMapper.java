@@ -17,4 +17,8 @@ import java.util.List;
 @Mapper
 public interface TeamMapper {
     List<Team> getListByContestId(String contestId);
+
+    void setTeam(Team team);
+
+    void delTeam(String teamId);
 }

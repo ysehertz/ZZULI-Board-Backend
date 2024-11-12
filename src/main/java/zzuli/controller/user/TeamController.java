@@ -21,12 +21,21 @@ import java.util.List;
  * @version 1.0
  * @createTime 2024/11/11
  */
+
+/**
+ * 队伍信息
+ */
 @RestController
 @RequestMapping("/api/team")
 public class TeamController {
     @Autowired
     private TeamService teamService;
 
+    /**
+     * 获取队伍列表
+     * @param contestId
+     * @return
+     */
     @GetMapping("/list")
     public Result<List<TeamListVO>> list(@RequestParam(name = "contest_id") String contestId) {
         List<TeamListVO> teamVOList = teamService.getListByContestId(contestId);

@@ -1,6 +1,31 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="zzuli.mapper.TeamMapper">
+    <update id="setTeam">
+        update teams
+        <set>
+            <if test="teamName != null">
+                team_name = #{teamName},
+            </if>
+            <if test="teamCoach != null">
+                team_coach = #{teamCoach},
+            </if>
+            <if test="teamCollage!= null">
+                team_collage = #{teamCollege},
+            </if>
+            <if test="teamClass != null">
+                team_class = #{teamClass},
+            </if>
+            <if test="Official != null">
+                official = #{official},
+            </if>
+        </set>
+        where team_id = #{teamId}
+    </update>
+    <delete id="delTeam">
+        delete from teams
+        where team_id = #{teamId}
+    </delete>
 
     <select id="getListByContestId" resultType="zzuli.pojo.entity.Team">
         select * from teams where contest_id = #{contestId}
