@@ -3,10 +3,7 @@ package zzuli.controller.admin;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import zzuli.common.result.Result;
 import zzuli.pojo.dto.CreateCollageDTO;
 import zzuli.service.CollageService;
@@ -40,6 +37,13 @@ public class CollegeController {
     @PostMapping("/create")
     public Result<Integer> createCollage(@RequestBody CreateCollageDTO dto) {
         collegeService.createCollage(dto);
+        return Result.success(null);
+    }
+
+    @PostMapping("/set")
+    public Result<Integer> setCollage(@RequestParam(name = "collage_id") int collageId,
+                            @RequestBody String name) {
+        collegeService.setCollage(collageId,name);
         return Result.success(null);
     }
 }

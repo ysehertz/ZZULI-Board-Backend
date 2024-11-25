@@ -6,4 +6,10 @@
     <insert id="createCollage">
         insert into colleges (school_id,college_name) values (#{school_id},#{name})
     </insert>
+    <update id="setCollage">
+        update colleges set college_name = #{name} where college_id = #{collageId}
+    </update>
+    <select id="getCollage" resultType="java.lang.String">
+        select college_name from colleges where school_id = #{school_id}
+    </select>
 </mapper>

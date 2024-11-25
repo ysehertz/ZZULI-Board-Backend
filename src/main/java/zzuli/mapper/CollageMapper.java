@@ -15,4 +15,8 @@ import zzuli.pojo.dto.CreateCollageDTO;
 @Mapper
 public interface CollageMapper {
     void createCollage(CreateCollageDTO dto);
+
+    String getCollage(int collageId);
+
+    void setCollage(int collageId, String name);
 }

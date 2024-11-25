@@ -13,4 +13,6 @@ import zzuli.pojo.dto.CreateCollageDTO;
  */
 public interface CollageService {
     void createCollage(CreateCollageDTO dto);
+
+    void setCollage(int collageId, String name);
 }
