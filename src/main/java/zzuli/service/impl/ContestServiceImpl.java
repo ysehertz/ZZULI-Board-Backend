@@ -239,25 +239,25 @@ public class ContestServiceImpl implements ContestService {
                 .memberSchool(signalDTO.getSchool())
                 .memberClass(signalDTO.getClazz())
                 .build();
+        if(contest == null){
+            throw new NoContestException(MessageConstant.NO_CONTEST);
+        }
         // 校验当前时间是否在比赛报名时间内
         if (contest.getRegStartTime().after(new Timestamp(System.currentTimeMillis())) || contest.getRegEndTime().before(new Timestamp(System.currentTimeMillis()))) {
             throw new RuntimeException(MessageConstant.REG_TIME_ERROR);
         }
-        if (contest != null) {
-            //校验邀请码
-            if (contest.getRegOffCode().equals(signalDTO.getReg_code())) {
-                // 校内成员设置为正式队伍
-                member.setOfficial(true);
-            } else if (contest.getRegUnoffConde().equals(signalDTO.getReg_code())) {
-                // 校外成员设置为非正式队伍
-                member.setOfficial(false);
-            } else {
-                throw new RuntimeException(MessageConstant.REG_CODE_ERROR);
-            }
-            // 保存个人信息
-            contestMapper.saveMember(member);
+        //校验邀请码
+        if (contest.getRegOffCode().equals(signalDTO.getReg_code())) {
+            // 校内成员设置为正式队伍
+            member.setOfficial(true);
+        } else if (contest.getRegUnoffConde().equals(signalDTO.getReg_code())) {
+            // 校外成员设置为非正式队伍
+            member.setOfficial(false);
+        } else {
+            throw new RuntimeException(MessageConstant.REG_CODE_ERROR);
         }
-        throw new NoContestException(MessageConstant.NO_CONTEST);
+        // 保存个人信息
+        contestMapper.saveMember(member);
     }
 
     /**
