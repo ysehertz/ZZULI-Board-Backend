@@ -40,6 +40,12 @@ public class CollegeController {
         return Result.success(null);
     }
 
+    /**
+     * 修改学院名字
+     * @param collageId
+     * @param name
+     * @return
+     */
     @PostMapping("/set")
     public Result<Integer> setCollage(@RequestParam(name = "collage_id") int collageId,
                             @RequestBody String name) {
