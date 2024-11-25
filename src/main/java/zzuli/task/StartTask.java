@@ -42,8 +42,8 @@ public class StartTask {
         if(notBeginMap == null || notBeginMap.size() == 0) {
             List<Contest> contestList  =  contestMapper.getAllContest();
             contestList.forEach(contest -> {
-                // 如果该比赛还未开始
-                if(contest.getStartTime().getTime() > System.currentTimeMillis()) {
+                // 如果该比赛还未结束
+                if(contest.getEndTime().getTime() > System.currentTimeMillis()) {
                     //将比赛id和比赛开始时间存入到key为notBegin的map中
                     redisTemplate.opsForHash().put("notBegin", contest.getContestId(), contest.getStartTime().toString()+"-"+contest.getEndTime().toString());
                 }
