@@ -1,5 +1,6 @@
 package zzuli.pojo.entity;
 
+import lombok.Builder;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -14,8 +15,9 @@ import java.io.Serializable;
  * @createTime 2024/11/10
  */
 @Data
+@Builder
 public class School implements Serializable {
-    private int id;
+    private int SchoolId;
     private String name;
     private String avatar;
 }
