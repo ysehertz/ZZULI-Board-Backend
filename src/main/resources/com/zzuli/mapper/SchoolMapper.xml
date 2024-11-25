@@ -11,4 +11,7 @@
     <select id="getSchoolById" resultType="zzuli.pojo.entity.School">
         select * from schools where school_id = #{schoolId}
     </select>
+    <select id="IsExistSchool" resultType="java.lang.Integer">
+        select count(school_id) from schools where school_id = #{schoolId}
+    </select>
 </mapper>

@@ -20,4 +20,6 @@ public interface SchoolMapper {
     School getSchoolById(int schoolId);
 
     void setSchool(School school);
+
+    int IsExistSchool(int schoolId);
 }
