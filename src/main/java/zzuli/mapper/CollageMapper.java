@@ -19,4 +19,6 @@ public interface CollageMapper {
     String getCollage(int collageId);
 
     void setCollage(int collageId, String name);
+
+    String getCollageName(int collageId);
 }

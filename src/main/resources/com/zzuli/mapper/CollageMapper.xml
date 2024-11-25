@@ -12,4 +12,7 @@
     <select id="getCollage" resultType="java.lang.String">
         select college_name from colleges where school_id = #{school_id}
     </select>
+    <select id="getCollageName" resultType="java.lang.String">
+        select college_name from colleges where college_id = #{collageId}
+    </select>
 </mapper>
