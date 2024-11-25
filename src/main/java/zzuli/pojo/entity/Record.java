@@ -26,12 +26,12 @@ public class Record implements Serializable {
     private String id;
     private String problemType;
     private String problemSetProblemId;
-    private String submitAt;
+    private java.sql.Timestamp submitAt;
     private String status;
     private String score;
     private String compiler;
     private String time;
     private String memory;
     private String previewSubmission;
-    private String judgeAt;
+    private java.sql.Timestamp judgeAt;
 }
