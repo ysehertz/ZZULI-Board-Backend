@@ -1,6 +1,7 @@
 package zzuli.pojo.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Data;
 
@@ -20,6 +21,7 @@ import java.io.Serializable;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Problem implements Serializable {
     private String id;
+    @JsonProperty("title")
     private String name;
     private String score;
 }
