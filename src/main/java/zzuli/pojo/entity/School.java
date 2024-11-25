@@ -15,5 +15,7 @@ import java.io.Serializable;
  */
 @Data
 public class School implements Serializable {
+    private int id;
     private String name;
+    private String avatar;
 }
