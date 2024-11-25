@@ -9,7 +9,7 @@ package zzuli.common.exception;
  * @version 1.0
  * @createTime 2024/11/25
  */
-public class NoSchoolException extends RuntimeException
+public class NoSchoolException extends BaseException
 {
     public NoSchoolException() {
     }
