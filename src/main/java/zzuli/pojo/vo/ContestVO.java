@@ -33,8 +33,7 @@ public class ContestVO implements Serializable {
     private java.sql.Timestamp reg_end_time;
     private int penalty;
     private boolean frozen;
-    private java.sql.Timestamp frozen_time;
+    private int frozen_time;
     private List<Balloon> balloon_color;
     private List<Problem> problem_list;
-    private List<School> school_list;
 }
