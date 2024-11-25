@@ -47,6 +47,8 @@ public class ContestController {
         contestService.CreateContest(dto);
         // 更新比赛信息
         contestService.UpContest(dto);
+        // 更新测评记录
+        contestService.getRecord(dto.getId(),dto.getJsession(),dto.getPTASession());
         return  Result.success(null);
     }
 

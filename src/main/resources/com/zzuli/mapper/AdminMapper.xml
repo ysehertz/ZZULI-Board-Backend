@@ -3,6 +3,6 @@
 <mapper namespace="zzuli.mapper.AdminMapper">
 
     <select id="selectAdminByUname" resultType="zzuli.pojo.entity.Admin">
-        select * from admins where uname = #{uname}
+        select * from admins where uname = #{username}
     </select>
 </mapper>

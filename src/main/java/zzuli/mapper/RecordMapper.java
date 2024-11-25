@@ -16,15 +16,15 @@ import java.util.List;
  */
 @Mapper
 public interface RecordMapper {
-    static void deleteAllBycontestId(String contestId) {
+    void deleteAllBycontestId(String contestId);
 
-    }
 
-    static void addRecord(Record record) {
-
-    }
 
     int getNumByContestId(String contestId);
 
     List<Record> getRecordByContestId(String contestId);
+
+    void addRecord(Record record);
+
+    void addRecords(List<Record> recordL);
 }

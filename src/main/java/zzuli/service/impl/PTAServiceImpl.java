@@ -2,6 +2,7 @@ package zzuli.service.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,7 @@ import java.util.Map;
  * @createTime 2024/11/13
  */
 @Service
+@Slf4j
 public class PTAServiceImpl implements PTAService {
     @Autowired
     private RedisTemplate redisTemplate;
@@ -43,6 +45,9 @@ public class PTAServiceImpl implements PTAService {
         headerMap.put("Accept-Encoding","gzip, deflate, br, zstd");
         headerMap.put("Accept","application/json;charset=UTF-8");
         String result = HttpClientUtil.doGet(url, paramMap, headerMap);
+        if(result!=null){
+            log.error("访问PTA失败，不能成功获取题目列表");
+        }
         return result;
     }
 
@@ -60,8 +65,12 @@ public class PTAServiceImpl implements PTAService {
         Map<String, String> headerMap = new HashMap<>();
         headerMap.put("Cookie", "JSESSIONID="+jsession+";"+"PTASession="+PTASession);
         headerMap.put("Accept-Encoding","gzip, deflate, br, zstd");
+        headerMap.put("Accept","application/json;charset=UTF-8");
 
         String result = HttpClientUtil.doGet(url, paramMap, headerMap);
+        if(result == null){
+            log.error("访问PTA失败，不能成功获取考生学号与ptaId的对应关系");
+        }
         return  result;
     }
 
@@ -74,8 +83,13 @@ public class PTAServiceImpl implements PTAService {
         Map<String, String> headerMap = new HashMap<>();
         headerMap.put("Cookie", "JSESSIONID="+jsession+";"+"PTASession="+ptaSession);
         headerMap.put("Accept-Encoding","gzip, deflate, br, zstd");
+        headerMap.put("Accept","application/json;charset=UTF-8");
+
 
         String result = HttpClientUtil.doGet(url, paramMap, headerMap);
+        if(result == null){
+            log.error("访问PTA失败，不能成功更新评测记录");
+        }
         return  result;
     }
 

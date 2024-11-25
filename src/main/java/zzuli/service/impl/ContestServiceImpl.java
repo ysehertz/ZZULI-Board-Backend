@@ -5,14 +5,11 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.aspectj.bridge.Message;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import zzuli.common.constant.MessageConstant;
 import zzuli.common.exception.NoContestException;
-import zzuli.common.result.Result;
 import zzuli.mapper.ContestMapper;
 import zzuli.mapper.RecordMapper;
 import zzuli.pojo.dto.CreateContestDTO;
@@ -25,7 +22,6 @@ import zzuli.pojo.entity.Record;
 import zzuli.pojo.vo.*;
 import zzuli.service.ContestService;
 import zzuli.service.PTAService;
-import zzuli.utils.HttpClientUtil;
 
 import java.sql.Timestamp;
 import java.util.*;
@@ -89,12 +85,10 @@ public class ContestServiceImpl implements ContestService {
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode rootNode = null;
             List<Balloon> balloonsList = null;
-            List<School> schoolList = null;
             List<Problem> problemList = null;
             try {
-                rootNode = objectMapper.readTree(contest.getBalloonColor());
+//                rootNode = objectMapper.readTree(contest.getBalloonColor());
                 balloonsList = objectMapper.readValue(objectMapper.readTree(contest.getBalloonColor()).toString(), new TypeReference<List<Balloon>>() {});
-                schoolList = objectMapper.readValue(objectMapper.readTree(contest.getSchoolList()).toString(), new TypeReference<List<School>>() {});
                 problemList = objectMapper.readValue(objectMapper.readTree(contest.getProblemList()).toString(), new TypeReference<List<Problem>>() {});
             } catch (JsonProcessingException e) {
                 throw new RuntimeException(e);
@@ -114,7 +108,6 @@ public class ContestServiceImpl implements ContestService {
                     .frozen_time(contest.getFrozenTime())
                     .balloon_color(balloonsList)
                     .problem_list(problemList)
-                    .school_list(schoolList)
                     .build();
         }
         return null;
@@ -135,13 +128,13 @@ public class ContestServiceImpl implements ContestService {
         Timestamp now = new Timestamp(System.currentTimeMillis());
         // 将比赛截止时间转为时间戳
         Timestamp end = contest.getEndTime();
-        boolean isFrozen = contest.isFrozen()&&new Timestamp(now.getTime() + contest.getFrozenTime().getTime()).after(end);
+        boolean isFrozen = contest.isFrozen()&&new Timestamp(now.getTime() + contest.getFrozenTime()).after(end);
         if(isFrozen){
             // 遍历哈希keys
             for(String key : keys ){
                 // 获取key对应的value
                 Map<Object, Object> values = redisTemplate.opsForHash().entries(key);
-                if(new Timestamp(Long.parseLong((String)values.get("submit_time")) + contest.getFrozenTime().getTime()).after(end)){
+                if(new Timestamp(Long.parseLong((String)values.get("submit_time")) + contest.getFrozenTime()).after(end)){
                     teamList.add(RecordVO.builder()
                             .record_id((String) values.get("record_id"))
                             .member_id((String) values.get("member_id"))
@@ -272,6 +265,8 @@ public class ContestServiceImpl implements ContestService {
                 .PTASession(dto.getPTASession())
                 .jsession(dto.getJsession())
                 .title(dto.getTitle())
+                .startTime(dto.getStart_time())
+                .endTime(dto.getEnd_time())
                 .regType(dto.getReg_type())
                 .regStartTime(dto.getReg_start_time())
                 .regEndTime(dto.getReg_end_time())
@@ -280,11 +275,14 @@ public class ContestServiceImpl implements ContestService {
                 .banner(dto.getBanner())
                 .penalty(dto.getPenalty())
                 .frozen(dto.isFrozen())
-                .frozenTime(new Timestamp(dto.getFrozen_time()))
+                .frozenTime(dto.getFrozen_time())
                 .balloonColor(dto.getBalloon_color().toString())
-                .schoolList(dto.getSchool_list().toString())
                 .build();
-        contestMapper.createContest(dto);
+        contestMapper.createContest(contest);
+
+        if(dto.getEnd_time().getTime() > System.currentTimeMillis()){
+            redisTemplate.opsForHash().put("notBegin", dto.getId(), dto.getStart_time().toString()+"-"+dto.getEnd_time().toString());
+        }
     }
 
     /**
@@ -303,7 +301,26 @@ public class ContestServiceImpl implements ContestService {
      */
     @Override
     public void setContest(String contestId, CreateContestDTO dto) {
-        contestMapper.setContest(contestId, dto);
+        Contest contest = Contest.builder()
+                .contestId(contestId)
+                .contestType(dto.getType())
+                .PTASession(dto.getPTASession())
+                .jsession(dto.getJsession())
+                .title(dto.getTitle())
+                .startTime(dto.getStart_time())
+                .endTime(dto.getEnd_time())
+                .regType(dto.getReg_type())
+                .regStartTime(dto.getReg_start_time())
+                .regEndTime(dto.getReg_end_time())
+                .regOffCode(dto.getReg_off_code())
+                .regUnoffConde(dto.getReg_unoff_code())
+                .banner(dto.getBanner())
+                .penalty(dto.getPenalty())
+                .frozen(dto.isFrozen())
+                .frozenTime(dto.getFrozen_time())
+                .balloonColor(dto.getBalloon_color().toString())
+                .build();
+        contestMapper.setContest(contest);
     }
 
     /**
@@ -312,11 +329,22 @@ public class ContestServiceImpl implements ContestService {
      */
     @Override
     public void UpContest(CreateContestDTO dto) {
-       String getProblem = ptaService.getProblemList(dto);
 
-       contestMapper.setProblemList(dto.getId(),getProblem);
+
+       String getProblem = ptaService.getProblemList(dto);
+        try {
+            JsonNode jsonNode = new ObjectMapper().readTree(getProblem);
+            JsonNode data = jsonNode.get("problemSetProblems");
+            List<Problem> problemList = objectMapper.readValue(data.toString(), new TypeReference<List<Problem>>() {});
+            getProblem = objectMapper.writeValueAsString(problemList);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+        contestMapper.setProblemList(dto.getId(),getProblem);
 
        String result = ptaService.UpMemberId(dto.getId(),dto.getJsession(),dto.getPTASession(),"0");
+       log.info("result::{}",result);
        // 判断循环次数
        int cot = -1;
 
@@ -330,10 +358,10 @@ public class ContestServiceImpl implements ContestService {
                 }
                 JsonNode data = jsonNode.get("members");
                 for (JsonNode node : data) {
-                    String studentNumber = node.get("studentNumber").asText();
-                    String id = node.get("id").asText();
+                    String studentNumber = node.get("studentUser").get("studentNumber").asText();
+                    String id = node.get("user").get("id").asText();
                     //存到redis的map中，key为S+考场ID，value为studentNumber对应id
-                    redisTemplate.opsForHash().put("S"+dto.getId(), studentNumber, id);
+                    redisTemplate.opsForHash().put("S"+dto.getId(),id , studentNumber);
                 }
             }while ((total -= 200) > 0);
         } catch (Exception e) {
@@ -350,12 +378,15 @@ public class ContestServiceImpl implements ContestService {
     @Override
     public void getRecord(String contestId, String jsession, String PTASession) {
         String recordTab = (String)redisTemplate.opsForValue().getAndSet("R"+contestId, "0");
-        if(recordTab == null || recordTab.equals("0"))
-            RecordMapper.deleteAllBycontestId(contestId);
+        if(recordTab == null || recordTab.equals("0")){
+            recordTab = "0";
+            recordMapper.deleteAllBycontestId(contestId);
+        }
         Map<String,String> paramMap = new HashMap<>();
         String before = "0";
         String result = ptaService.getRecord(contestId, jsession, PTASession, before);
 
+//        List<Record> recordL = new ArrayList<>();
         // 继续增量标志
         boolean flag = true;
         // 每次获取数据的首数据标志
@@ -374,7 +405,7 @@ public class ContestServiceImpl implements ContestService {
                 if(size != 0){
                     before = recordList.get(size-1).getId();
                     for(Record record : recordList){
-                        if(recordTab.equals(record.getId())){
+                        if( recordTab.equals(record.getId())){
                             flag = false;
                             break;
                         }
@@ -383,7 +414,11 @@ public class ContestServiceImpl implements ContestService {
                             firstLab = 0;
                         }
                         record.setMemberId((String)redisTemplate.opsForHash().get("S"+contestId, record.getUserId()));
-                        RecordMapper.addRecord(record);
+                        record.setContestId(contestId);
+
+                        recordMapper.addRecord(record);
+
+//                        recordL.add(record);
 
 
                         // 将数据存到redis当中
@@ -399,6 +434,7 @@ public class ContestServiceImpl implements ContestService {
 
                         redisTemplate.opsForHash().putAll("C"+contestId+":"+record.getId(), KVMap);
                     }
+
                 }
                 if(size < 200){
                     flag = false;
@@ -410,6 +446,7 @@ public class ContestServiceImpl implements ContestService {
 
 
         }
+//        recordMapper.addRecords(recordL);
 
 
     }
