@@ -23,5 +23,7 @@ public class MessageConstant {
     public static final String CALL_PTA_ERROR = "调用pta接口失败";
     //json解析异常
     public static final String JSON_PARSE_ERROR = "json解析异常";
+    // 没有该学校
+    public static final String NO_SCHOOL = "没有该学校";
 
 }
