@@ -38,8 +38,7 @@ public class Contest  implements Serializable {
     private String banner;
     private int penalty;
     private boolean frozen;
-    private java.sql.Timestamp frozenTime;
+    private int frozenTime;
     private String balloonColor;
     private String problemList;
-    private String schoolList;
 }
