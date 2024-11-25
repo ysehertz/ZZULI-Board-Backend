@@ -1,6 +1,7 @@
 package zzuli.service;
 
 import zzuli.pojo.dto.CreateClassDTO;
+import zzuli.pojo.dto.SetClassDTO;
 
 /**
  * ClassName: ClassService
@@ -13,4 +14,6 @@ import zzuli.pojo.dto.CreateClassDTO;
  */
 public interface ClassService {
     void createClass(CreateClassDTO dto);
+
+    void setClass(int classId, SetClassDTO dto);
 }

@@ -5,4 +5,18 @@
     <insert id="createClass">
         insert into classes (college_id,class_name,class_count) values (#{collage_id},#{name},#{count})
     </insert>
+
+    <update id="setClass">
+        update classes
+        <set>
+            <if test="className != null">
+                class_name = #{className},
+            </if>
+            <if test="classCount != null">
+                class_count = #{classCount},
+            </if>
+        </set>
+        where class_id = #{classId}
+    </update>
+
 </mapper>

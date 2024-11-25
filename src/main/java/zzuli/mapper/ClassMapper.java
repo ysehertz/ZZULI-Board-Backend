@@ -2,6 +2,7 @@ package zzuli.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 import zzuli.pojo.dto.CreateClassDTO;
+import zzuli.pojo.entity.Clazz;
 
 /**
  * ClassName: ClassMapper
@@ -16,4 +17,6 @@ import zzuli.pojo.dto.CreateClassDTO;
 public interface ClassMapper {
 
     void createClass(CreateClassDTO dto);
+
+    void setClass(Clazz clazz);
 }

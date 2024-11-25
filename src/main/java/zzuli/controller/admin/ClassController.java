@@ -2,12 +2,10 @@ package zzuli.controller.admin;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import zzuli.common.result.Result;
 import zzuli.pojo.dto.CreateClassDTO;
+import zzuli.pojo.dto.SetClassDTO;
 import zzuli.service.ClassService;
 
 /**
@@ -38,6 +36,19 @@ public class ClassController {
     @PostMapping("/create")
     public Result<Integer> createClass(@RequestBody CreateClassDTO dto) {
         classService.createClass(dto);
+        return Result.success(null);
+    }
+
+    /**
+     * 修改班级信息
+     * @param classId
+     * @param dto
+     * @return
+     */
+    @PostMapping("/set")
+    public Result<Integer> setClass(@RequestParam(name = "class_id") int classId,
+            @RequestBody SetClassDTO dto) {
+        classService.setClass(classId,dto);
         return Result.success(null);
     }
 

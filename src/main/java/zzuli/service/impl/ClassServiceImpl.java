@@ -7,6 +7,8 @@ import zzuli.common.exception.BaseException;
 import zzuli.mapper.ClassMapper;
 import zzuli.mapper.CollageMapper;
 import zzuli.pojo.dto.CreateClassDTO;
+import zzuli.pojo.dto.SetClassDTO;
+import zzuli.pojo.entity.Clazz;
 import zzuli.service.ClassService;
 
 /**
@@ -33,5 +35,16 @@ public class ClassServiceImpl implements ClassService {
         }
         log.info("为{}创建班级{}", collageName, dto.getName());
         classMapper.createClass(dto);
+    }
+
+    @Override
+    public void setClass( int classId, SetClassDTO dto) {
+        Clazz clazz = Clazz.builder()
+                .classCount(dto.getCount())
+                .className(dto.getName())
+                .classId(classId)
+                .build();
+        log.info("设置班级{}的信息", classId);
+        classMapper.setClass(clazz);
     }
 }
