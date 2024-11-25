@@ -13,4 +13,6 @@ import zzuli.pojo.dto.CreateSchoolDTO;
  */
 public interface SchoolService {
     void createSchool(CreateSchoolDTO dto);
+
+    void setSchool(int schoolId, CreateSchoolDTO dto);
 }
