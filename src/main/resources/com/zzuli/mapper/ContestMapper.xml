@@ -12,7 +12,7 @@
     </insert>
     <insert id="createContest">
         insert into contests (contest_id, contest_type, PTASession, Jsession, title, reg_type,reg_start_time,reg_end_time,reg_off_code,reg_unoff_code,banner,penalty,frozen,frozen_time,balloon_color,school_list) values
-        (#{contestId}, #{contestType}, #{ptaSession}, #{jsession}, #{title}, #{regType}, #{regStartTime}, #{regEndTime}, #{regOffCode}, #{regUnoffCode}, #{banner}, #{penalty}, #{frozen}, #{frozenTime}, #{balloonColor}, #{schoolList});
+        (#{id}, #{type}, #{PTASession}, #{Jsession}, #{title}, #{reg_type}, #{reg_start_time}, #{reg_end_time}, #{reg_off_code}, #{reg_unoff_code}, #{banner}, #{penalty}, #{frozen}, #{frozen_time}, #{S_balloon_color}, #{S_school_list});
     </insert>
     <update id="setContest">
         update contests
@@ -36,6 +36,11 @@
         </set>
         where contest_id = #{contestId}
     </update>
+    <update id="setProblemList">
+        update contests
+        set problem_list = #{problemList}
+        where contest_id = #{contestId}
+    </update>
     <delete id="deleteContest">
         delete from contests where contest_id = #{contestId};
     </delete>
@@ -46,5 +51,11 @@
     </select>
     <select id="getContestById" resultType="zzuli.pojo.entity.Contest">
         select * from contests where contest_id = #{id};
+    </select>
+    <select id="getAllContest" resultType="zzuli.pojo.entity.Contest">
+        select * from contests;
+    </select>
+    <select id="getPTASession" resultType="zzuli.pojo.entity.PTASession">
+        select PTASession,Jsession from contests where contest_id = #{contestId};
     </select>
 </mapper>

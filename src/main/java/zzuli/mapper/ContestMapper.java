@@ -1,11 +1,13 @@
 package zzuli.mapper;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import zzuli.common.result.Result;
 import zzuli.pojo.dto.CreateContestDTO;
 import zzuli.pojo.entity.Contest;
 import zzuli.pojo.entity.Member;
+import zzuli.pojo.entity.PTASession;
 import zzuli.pojo.entity.Team;
 import zzuli.pojo.vo.ContestListVO;
 
@@ -37,4 +39,10 @@ public interface ContestMapper {
     void deleteContest(String contestId);
 
     void setContest(String contestId, CreateContestDTO dto);
+
+    void setProblemList(String id, String problemList);
+
+    List<Contest> getAllContest();
+
+    PTASession getPTASession(String contestId);
 }

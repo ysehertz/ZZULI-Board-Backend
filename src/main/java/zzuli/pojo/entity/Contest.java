@@ -2,9 +2,11 @@ package zzuli.pojo.entity;
 
 import com.alibaba.fastjson.JSON;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -17,9 +19,10 @@ import java.util.List;
  * @createTime 2024/11/10
  */
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Contest {
+public class Contest  implements Serializable {
     private String contestId;
     private String PTASession;
     private String jsession;

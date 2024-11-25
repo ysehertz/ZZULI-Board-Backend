@@ -19,4 +19,9 @@ public class MessageConstant {
 
     public static final String REG_CODE_ERROR = "邀请码错误";
 
+    public static final String REG_TIME_ERROR = "不在报名时间内";
+    public static final String CALL_PTA_ERROR = "调用pta接口失败";
+    //json解析异常
+    public static final String JSON_PARSE_ERROR = "json解析异常";
+
 }

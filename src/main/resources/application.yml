@@ -9,14 +9,14 @@ spring:
   datasource:
     druid:
       driver-class-name: ${isljq.datasource.driver-class-name}
-      url: jdbc:mysql://${isljq.datasource.host}:${isljq.datasource.port}/${isljq.datasource.database}?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=CONVERT_TO_NULL&useSSL=false&allowPublicKeyRetrieval=true
+      url: jdbc:mysql://${isljq.datasource.host}:${isljq.datasource.port}/${isljq.datasource.database}?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=CONVERT_TO_NULL&useSSL=false&allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=UTF-8
       username: ${isljq.datasource.username}
       password: ${isljq.datasource.password}
-#  redis:
-#    host: 192.168.200.130
-#    port: 6379
-#    database: 2
-#    password: ""
+  redis:
+    host: ${isljq.redis.host}
+    port: ${isljq.redis.port}
+    database: ${isljq.redis.database}
+    password: ${isljq.redis.password}
 
 mybatis:
   #mapper配置文件
@@ -40,9 +40,10 @@ zzuli:
     admin-ttl: 7200000
     # 设置前端传递过来的令牌名称
     admin-token-name: BoardSession
-#    # 设置前端传递过来的令牌名称
-#    user-secret-key: zzuli
-#    user-ttl: 7200000
-#    user-token-name: authentication
+
+task:
+  frequency:
+    getRecord: 5
+    start: 120
 
 

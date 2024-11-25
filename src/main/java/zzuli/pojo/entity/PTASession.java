@@ -6,19 +6,17 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
- * ClassName: Room
+ * ClassName: PTASession
  * Package: zzuli.pojo.entity
  * Description:
  *
  * @author fuchen
  * @version 1.0
- * @createTime 2024/11/10
+ * @createTime 2024/11/14
  */
-@Data
 @Builder
-public class Room implements Serializable {
-    private int roomId;
-    private String roomName;
-    private String contestId;
-    private int roomSize;
+@Data
+public class PTASession implements Serializable {
+    private String jsession;
+    private String PTASession;
 }

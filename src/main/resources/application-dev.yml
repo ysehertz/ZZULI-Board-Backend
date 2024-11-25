@@ -6,3 +6,8 @@ isljq:
     database: test
     username: root
     password: '01010111'
+  redis:
+    host: 192.168.200.130
+    port: 6379
+    database: 2
+    password: ""

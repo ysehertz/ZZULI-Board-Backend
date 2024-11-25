@@ -3,6 +3,8 @@ package zzuli.pojo.entity;
 import lombok.Builder;
 import lombok.Data;
 
+import java.io.Serializable;
+
 /**
  * ClassName: Team
  * Package: zzuli.pojo.entity
@@ -14,7 +16,7 @@ import lombok.Data;
  */
 @Data
 @Builder
-public class Team {
+public class Team implements Serializable {
     private int teamId;
     private String contestId;
     private String teamName;

@@ -7,19 +7,19 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
- * ClassName: Problem
+ * ClassName: StudentUser
  * Package: zzuli.pojo.entity
  * Description:
  *
  * @author fuchen
  * @version 1.0
- * @createTime 2024/11/10
+ * @createTime 2024/11/13
  */
 @Data
 @Builder
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Problem implements Serializable {
-    private String id;
+public class StudentUser implements Serializable {
+    private String studentNumber;
     private String name;
-    private String score;
+    private String id;
 }

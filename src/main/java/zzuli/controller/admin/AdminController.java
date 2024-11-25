@@ -59,9 +59,10 @@ public class AdminController {
         return Result.success(adminLoginVO);
     }
 
-    @GetMapping("/test")
+    @GetMapping("/admin/test")
     public Result<String> test() {
-        return Result.success("test");
+
+        return Result.success(jwtProperties.getAdminTokenName());
     }
 
 }

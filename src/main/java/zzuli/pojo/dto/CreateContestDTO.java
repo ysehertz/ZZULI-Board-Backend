@@ -1,9 +1,13 @@
 package zzuli.pojo.dto;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.databind.JsonNode;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
+import javax.persistence.Column;
 import java.io.Serializable;
 
 /**
@@ -17,8 +21,10 @@ import java.io.Serializable;
  */
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class CreateContestDTO implements Serializable {
-    private int id;
+    private String id;
     private String type;
     private String PTASession;
     private String Jsession;
@@ -34,4 +40,6 @@ public class CreateContestDTO implements Serializable {
     private int frozen_time;
     private JsonNode balloon_color;
     private JsonNode school_list;
+    private String S_balloon_color;
+    private String S_school_list;
 }

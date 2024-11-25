@@ -6,6 +6,7 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * ClassName: Application
@@ -18,7 +19,7 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
  */
 @Slf4j
 @SpringBootApplication(exclude = DataSourceAutoConfiguration.class)
-//@Transactional
+@Transactional
 public class Application {
     public static void main(String[] args) {
         log.info("server started");

@@ -2,6 +2,8 @@ package zzuli.pojo.entity;
 
 import lombok.Data;
 
+import java.io.Serializable;
+
 /**
  * ClassName: Balloon
  * Package: zzuli.pojo.entity
@@ -12,7 +14,7 @@ import lombok.Data;
  * @createTime 2024/11/10
  */
 @Data
-public class Balloon {
+public class Balloon implements Serializable {
     private String id;
     private String color;
 }

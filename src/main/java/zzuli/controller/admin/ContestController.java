@@ -46,8 +46,7 @@ public class ContestController {
         // 创建比赛
         contestService.CreateContest(dto);
         // 更新比赛信息
-        // todo: 更新比赛信息
-
+        contestService.UpContest(dto);
         return  Result.success(null);
     }
 

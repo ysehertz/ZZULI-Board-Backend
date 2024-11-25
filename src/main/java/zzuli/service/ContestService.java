@@ -5,6 +5,7 @@ import zzuli.common.result.Result;
 import zzuli.pojo.dto.CreateContestDTO;
 import zzuli.pojo.dto.RegisterTeamDTO;
 import zzuli.pojo.dto.SingleDTO;
+import zzuli.pojo.entity.PTASession;
 import zzuli.pojo.vo.ContestListVO;
 import zzuli.pojo.vo.ContestVO;
 import zzuli.pojo.vo.RecordVO;
@@ -37,4 +38,19 @@ public interface ContestService {
     void deleteContest(String contestId);
 
     void setContest(String contestId, CreateContestDTO dto);
+
+    void UpContest(CreateContestDTO dto);
+
+    /**
+     * 获取比赛记录
+     * @param contestId 比赛id
+     * @param jsession pta
+     * @param PTASession pta
+     */
+    void getRecord(String contestId, String jsession, String PTASession);
+
+    // 同步mysql和redis数据
+    void synchrodata(String contestId);
+
+    PTASession getPTASession(String contestId);
 }
