@@ -47,4 +47,10 @@ public class ClassServiceImpl implements ClassService {
         log.info("设置班级{}的信息", classId);
         classMapper.setClass(clazz);
     }
+
+    @Override
+    public void deleteClass(int classId) {
+        classMapper.deleteClass(classId);
+        collageMapper.deleteCollageByClassId(classId);
+    }
 }

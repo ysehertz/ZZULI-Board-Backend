@@ -18,5 +18,11 @@
         </set>
         where class_id = #{classId}
     </update>
+    <delete id="deleteClass">
+        delete from classes where class_id = #{classId}
+    </delete>
+    <delete id="deleteClassByCollageId">
+        delete from classes where college_id = #{collageId}
+    </delete>
 
 </mapper>

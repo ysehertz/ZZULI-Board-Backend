@@ -3,6 +3,8 @@ package zzuli.mapper;
 import org.apache.ibatis.annotations.Mapper;
 import zzuli.pojo.dto.CreateCollageDTO;
 
+import java.util.List;
+
 /**
  * ClassName: CollageMapper
  * Package: zzuli.mapper
@@ -21,4 +23,11 @@ public interface CollageMapper {
     void setCollage(int collageId, String name);
 
     String getCollageName(int collageId);
+
+    void deleteCollageByClassId(int classId);
+
+    List<Integer> getCollageIdsBySchoolId(int schoolId);
+
+    void deleteCollageBySchoolId(int schoolId);
+
 }

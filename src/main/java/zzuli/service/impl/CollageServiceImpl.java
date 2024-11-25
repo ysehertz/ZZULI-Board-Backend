@@ -2,10 +2,12 @@ package zzuli.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.AutoConfigurationPackage;
 import org.springframework.stereotype.Service;
 import zzuli.common.constant.MessageConstant;
 import zzuli.common.exception.BaseException;
 import zzuli.common.exception.NoSchoolException;
+import zzuli.mapper.ClassMapper;
 import zzuli.mapper.CollageMapper;
 import zzuli.mapper.SchoolMapper;
 import zzuli.pojo.dto.CreateCollageDTO;
@@ -29,6 +31,8 @@ public class CollageServiceImpl implements CollageService {
     private CollageMapper collageMapper;
     @Autowired
     private SchoolMapper schoolMapper;
+    @Autowired
+    private ClassMapper classMapper;
 
     @Override
     public void createCollage(CreateCollageDTO dto) {
@@ -47,5 +51,10 @@ public class CollageServiceImpl implements CollageService {
         }
         log.info("set collage: {}", oldName + "---->" +name);
         collageMapper.setCollage(collageId,name);
+    }
+
+    @Override
+    public void deleteCollage(int collageId) {
+        classMapper.deleteClassByCollageId(collageId);
     }
 }

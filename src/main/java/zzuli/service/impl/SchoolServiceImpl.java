@@ -5,10 +5,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import zzuli.common.constant.MessageConstant;
 import zzuli.common.exception.NoSchoolException;
+import zzuli.mapper.ClassMapper;
+import zzuli.mapper.CollageMapper;
 import zzuli.mapper.SchoolMapper;
 import zzuli.pojo.dto.CreateSchoolDTO;
 import zzuli.pojo.entity.School;
 import zzuli.service.SchoolService;
+
+import java.util.List;
 
 /**
  * ClassName: ScholServiceImpl
@@ -22,6 +26,10 @@ import zzuli.service.SchoolService;
 @Service
 @Slf4j
 public class SchoolServiceImpl implements SchoolService {
+    @Autowired
+    private ClassMapper classMapper;
+    @Autowired
+    private CollageMapper collageMapper;
     @Autowired
     private SchoolMapper schoolMapper;
     /**
@@ -50,5 +58,15 @@ public class SchoolServiceImpl implements SchoolService {
                 .avatar(dto.getAvatar())
                 .build();
         schoolMapper.setSchool(school);
+    }
+
+    @Override
+    public void deleteSchool(int schoolId) {
+        List<Integer> collageIds = collageMapper.getCollageIdsBySchoolId(schoolId);
+        for (Integer collageId : collageIds) {
+            classMapper.deleteClassByCollageId(collageId);
+        }
+        collageMapper.deleteCollageBySchoolId(schoolId);
+        schoolMapper.deleteSchool(schoolId);
     }
 }

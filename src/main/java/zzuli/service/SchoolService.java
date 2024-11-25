@@ -15,4 +15,6 @@ public interface SchoolService {
     void createSchool(CreateSchoolDTO dto);
 
     void setSchool(int schoolId, CreateSchoolDTO dto);
+
+    void deleteSchool(int schoolId);
 }

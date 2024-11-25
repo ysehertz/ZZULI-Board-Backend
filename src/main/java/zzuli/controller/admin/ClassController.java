@@ -52,4 +52,15 @@ public class ClassController {
         return Result.success(null);
     }
 
+    /**
+     * 删除班级
+     * @param classId
+     * @return
+     */
+    @PostMapping("/delete")
+    public Result<Integer> deleteClass(@RequestParam(name = "class_id") int classId) {
+        classService.deleteClass(classId);
+        return Result.success(null);
+    }
+
 }

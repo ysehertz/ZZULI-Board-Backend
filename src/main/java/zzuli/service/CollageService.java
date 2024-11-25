@@ -15,4 +15,6 @@ public interface CollageService {
     void createCollage(CreateCollageDTO dto);
 
     void setCollage(int collageId, String name);
+
+    void deleteCollage(int collageId);
 }

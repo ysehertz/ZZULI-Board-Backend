@@ -16,4 +16,6 @@ public interface ClassService {
     void createClass(CreateClassDTO dto);
 
     void setClass(int classId, SetClassDTO dto);
+
+    void deleteClass(int classId);
 }

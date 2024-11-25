@@ -8,6 +8,9 @@
     <update id="setSchool">
         update schools set school_name = #{name},avatar = #{avatar} where school_id = #{schoolId}
     </update>
+    <delete id="deleteSchool">
+        delete from schools where school_id = #{schoolId}
+    </delete>
     <select id="getSchoolById" resultType="zzuli.pojo.entity.School">
         select * from schools where school_id = #{schoolId}
     </select>

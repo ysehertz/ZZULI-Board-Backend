@@ -9,10 +9,19 @@
     <update id="setCollage">
         update colleges set college_name = #{name} where college_id = #{collageId}
     </update>
+    <delete id="deleteCollageByClassId">
+        delete from colleges where college_id = #{collageId}
+    </delete>
+    <delete id="deleteCollageBySchoolId">
+        delete from colleges where school_id = #{schoolId}
+    </delete>
     <select id="getCollage" resultType="java.lang.String">
         select college_name from colleges where school_id = #{school_id}
     </select>
     <select id="getCollageName" resultType="java.lang.String">
         select college_name from colleges where college_id = #{collageId}
+    </select>
+    <select id="getCollageIdsBySchoolId" resultType="java.lang.Integer">
+        select college_id from colleges where school_id = #{schoolId}
     </select>
 </mapper>

@@ -47,4 +47,15 @@ public class SchoolController {
         return Result.success(null);
     }
 
+    /**
+     * 删除学校
+     * @param schoolId
+     * @return
+     */
+    @PostMapping("/delete")
+    public Result<Integer> deleteSchool(@RequestParam("school_id") int schoolId) {
+        schoolService.deleteSchool(schoolId);
+        return Result.success(null);
+    }
+
 }

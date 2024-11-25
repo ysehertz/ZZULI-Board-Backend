@@ -4,6 +4,8 @@ import org.apache.ibatis.annotations.Mapper;
 import zzuli.pojo.dto.CreateSchoolDTO;
 import zzuli.pojo.entity.School;
 
+import java.util.List;
+
 /**
  * ClassName: SchoolMapper
  * Package: zzuli.mapper
@@ -22,4 +24,6 @@ public interface SchoolMapper {
     void setSchool(School school);
 
     int IsExistSchool(int schoolId);
+
+    void deleteSchool(int schoolId);
 }

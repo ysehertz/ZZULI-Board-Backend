@@ -52,4 +52,15 @@ public class CollegeController {
         collegeService.setCollage(collageId,name);
         return Result.success(null);
     }
+
+    /**
+     * 删除学院
+     * @param collageId
+     * @return
+     */
+    @PostMapping("/delete")
+    public Result<Integer> deleteCollage(@RequestParam(name = "collage_id") int collageId) {
+        collegeService.deleteCollage(collageId);
+        return Result.success(null);
+    }
 }
