@@ -17,22 +17,22 @@
     <update id="setContest">
         update contests
         <set>
-            <if test="DTO.id != null"> contests_id = #{DTO.id},</if>
-            <if test="DTO.type != null">contest_type = #{DTO.type},</if>
-            <if test="DTO.PTASession != null">PTASession = #{DTO.PTASession},</if>
-            <if test="DTO.jsession != null">Jsession = #{DTO.jsession},</if>
-            <if test="DTO.title != null">title = #{DTO.title},</if>
-            <if test="DTO.reg_Type != null">reg_type = #{DTO.reg_Type},</if>
-            <if test="DTO.reg_start_time != null">reg_start_time = #{DTP.reg_start_time},</if>
-            <if test="DTO.reg_end_time != null">reg_end_time = #{DTO.reg_end_time},</if>
-            <if test="DTO.reg_off_code != null">reg_off_code = #{DTO.reg_off_code},</if>
-            <if test="DTO.reg_unoff_code!= null">reg_unoff_code = #{DTO.reg_unoff_code},</if>
-            <if test="DTO.banner != null">banner = #{DTO.banner},</if>
-            <if test="DTO.penalty != null">penalty = #{DTO.penalty},</if>
-            <if test="DTO.frozen != null">frozen = #{DTO.frozen},</if>
-            <if test="DTO.frozen_time != null">frozen_time = #{DTO.frozen_time},</if>
-            <if test="DTO.balloon_color != null">balloon_color = #{DTO.balloon_color},</if>
-            <if test="DTO.school_list != null">school_list = #{DTO.school_list},</if>
+            <if test="dto.id != null"> contests_id = #{dto.id},</if>
+            <if test="dto.type != null">contest_type = #{dto},</if>
+            <if test="dto.PTASession != null">PTASession = #{dto.PTASession},</if>
+            <if test="dto.jsession != null">Jsession = #{dto.jsession},</if>
+            <if test="dto.title != null">title = #{dto.title},</if>
+            <if test="dto.reg_Type != null">reg_type = #{dto.reg_Type},</if>
+            <if test="dto.reg_start_time != null">reg_start_time = #{dto.reg_start_time},</if>
+            <if test="dto.reg_end_time != null">reg_end_time = #{dto.reg_end_time},</if>
+            <if test="dto.reg_off_code != null">reg_off_code = #{dto.reg_off_code},</if>
+            <if test="dto.reg_unoff_code!= null">reg_unoff_code = #{dto.reg_unoff_code},</if>
+            <if test="dto.banner != null">banner = #{dto.banner},</if>
+            <if test="dto.penalty != null">penalty = #{dto.penalty},</if>
+            <if test="dto.frozen != null">frozen = #{dto.frozen},</if>
+            <if test="dto.frozen_time != null">frozen_time = #{dto.frozen_time},</if>
+            <if test="dto.balloon_color != null">balloon_color = #{dto.balloon_color},</if>
+            <if test="dto.school_list != null">school_list = #{dto.school_list},</if>
         </set>
         where contest_id = #{contestId}
     </update>
