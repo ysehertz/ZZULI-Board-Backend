@@ -53,7 +53,7 @@ public class SchoolServiceImpl implements SchoolService {
             throw new NoSchoolException(MessageConstant.NO_SCHOOL);
         }
         School school = School.builder()
-                .SchoolId(schoolId)
+                .schoolId(schoolId)
                 .name(dto.getName())
                 .avatar(dto.getAvatar())
                 .build();
@@ -68,5 +68,10 @@ public class SchoolServiceImpl implements SchoolService {
         }
         collageMapper.deleteCollageBySchoolId(schoolId);
         schoolMapper.deleteSchool(schoolId);
+    }
+
+    @Override
+    public List<School> list() {
+        return schoolMapper.list();
     }
 }

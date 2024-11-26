@@ -1,6 +1,9 @@
 package zzuli.service;
 
 import zzuli.pojo.dto.CreateSchoolDTO;
+import zzuli.pojo.entity.School;
+
+import java.util.List;
 
 /**
  * ClassName: SchoolService
@@ -17,4 +20,7 @@ public interface SchoolService {
     void setSchool(int schoolId, CreateSchoolDTO dto);
 
     void deleteSchool(int schoolId);
+
+    List<School> list();
+
 }

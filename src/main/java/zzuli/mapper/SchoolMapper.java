@@ -26,4 +26,7 @@ public interface SchoolMapper {
     int IsExistSchool(int schoolId);
 
     void deleteSchool(int schoolId);
+
+    List<School> list();
+
 }
