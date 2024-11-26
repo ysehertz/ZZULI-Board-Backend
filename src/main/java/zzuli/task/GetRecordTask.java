@@ -14,6 +14,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+
 /**
  * ClassName: GetRecord
  * Package: zzuli.task
@@ -44,7 +45,7 @@ public class GetRecordTask {
                 contestService.getRecord(contestId , jsession, ptaService);
             } else {
                 System.out.println("Stopping scheduled task: " + LocalDateTime.now());
-                shutdownScheduler();
+                scheduler.shutdown();
             }
         };
         scheduler.scheduleAtFixedRate(task, 0, period, TimeUnit.SECONDS);

@@ -35,7 +35,7 @@ public class StartTask {
     private RedisTemplate redisTemplate;
 
     // 检查是否有比赛将要开始，为要开始的比赛创建任务
-    @Scheduled(cron = "0/${task.frequency.start} * * * * ? ")
+//    @Scheduled(cron = "0/${task.frequency.start} * * * * ? ")
     public void checkStart() {
         //获取key为notBegin的map类型的所有数据
         Map<String, String> notBeginMap = redisTemplate.opsForHash().entries("notBegin");
@@ -62,7 +62,7 @@ public class StartTask {
                 //为要开始的比赛创建定时任务
                 getRecordTask.getRecord(k,new Timestamp(Long.parseLong(endTime)));
                 //将比赛从notBegin中删除
-                redisTemplate.opsForSet().remove("notBegin", k);
+                redisTemplate.opsForHash().delete("notBegin", k);
             }
         });
     }
