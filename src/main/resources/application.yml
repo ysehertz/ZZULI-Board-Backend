@@ -29,8 +29,11 @@ mybatis:
 
 logging:
   level:
-    com:
-      zzuli: debug
+    zzuli:
+#      mapper: debug
+      service: info
+      controller: info
+
 
 zzuli:
   jwt:
