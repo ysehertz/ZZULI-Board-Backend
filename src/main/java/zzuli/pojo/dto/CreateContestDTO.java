@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 import java.io.Serializable;
+import java.time.Instant;
 
 /**
  * ClassName: CreateContestDTO
@@ -29,19 +30,16 @@ public class CreateContestDTO implements Serializable {
     private String type;
     @JsonProperty("PTASession")
     private String PTASession;
-    @JsonProperty("Jsession")
+    @JsonProperty("jsession")
     private String Jsession;
     private String title;
-    private java.sql.Timestamp start_time;
-    private java.sql.Timestamp end_time;
+    private Instant start_time;
+    private Instant end_time;
     private String reg_type;
-    private java.sql.Timestamp reg_start_time;
-    private java.sql.Timestamp reg_end_time;
+    private Instant reg_start_time;
+    private Instant reg_end_time;
     private String reg_off_code;
     private String reg_unoff_code;
-    private String banner;
-    private int penalty;
-    private boolean frozen;
-    private int frozen_time;
+    private JsonNode extra;
     private JsonNode balloon_color;
 }

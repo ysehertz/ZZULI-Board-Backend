@@ -1,6 +1,7 @@
 package zzuli.pojo.vo;
 
 import com.alibaba.fastjson.JSON;
+import com.fasterxml.jackson.databind.JsonNode;
 import lombok.Builder;
 import lombok.Data;
 import zzuli.pojo.entity.Balloon;
@@ -8,6 +9,7 @@ import zzuli.pojo.entity.Problem;
 import zzuli.pojo.entity.School;
 
 import java.io.Serializable;
+import java.time.Instant;
 import java.util.List;
 
 /**
@@ -25,15 +27,12 @@ public class ContestVO implements Serializable {
     private String id;
     private String type;
     private String title;
-    private String banner;
-    private java.sql.Timestamp start_time;
-    private java.sql.Timestamp end_time;
+    private Long start_time;
+    private Long end_time;
     private String reg_type;
-    private java.sql.Timestamp reg_start_time;
-    private java.sql.Timestamp reg_end_time;
-    private int penalty;
-    private boolean frozen;
-    private int frozen_time;
+    private Long reg_start_time;
+    private  Long reg_end_time;
+    private JsonNode extra;
     private List<Balloon> balloon_color;
     private List<Problem> problem_list;
 }

@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.time.Instant;
 
 /**
  * ClassName: RecordVO
@@ -23,6 +24,6 @@ public class RecordVO implements Serializable {
     private String status;
     private int score;
     private String language;
-    private java.sql.Timestamp submit_time;
+    private Long submit_time;
     private boolean balloon;
 }

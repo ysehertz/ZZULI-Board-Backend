@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.time.Instant;
 
 /**
  * ClassName: ContestListVO
@@ -24,9 +25,9 @@ public class ContestListVO implements Serializable {
     private String id;
     private String type;
     private String title;
-    private java.sql.Timestamp start_time;
-    private java.sql.Timestamp end_time;
+    private Long start_time;
+    private Long end_time;
     private String reg_type;
-    private java.sql.Timestamp reg_start_time;
-    private java.sql.Timestamp reg_end_time;
+    private Long reg_start_time;
+    private Long reg_end_time;
 }

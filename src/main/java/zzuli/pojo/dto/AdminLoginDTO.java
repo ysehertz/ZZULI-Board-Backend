@@ -1,6 +1,9 @@
 package zzuli.pojo.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
@@ -14,6 +17,9 @@ import java.io.Serializable;
  * @createTime 2024/11/9
  */
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class AdminLoginDTO implements Serializable {
     private String uname; // 用户名
     private String password; // 密码
