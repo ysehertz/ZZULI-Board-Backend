@@ -1,5 +1,6 @@
 package zzuli.pojo.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Data;
 
@@ -17,7 +18,8 @@ import java.io.Serializable;
 @Data
 @Builder
 public class School implements Serializable {
-    private int SchoolId;
+    @JsonProperty("school_id")
+    private int schoolId;
     private String name;
     private String avatar;
 }

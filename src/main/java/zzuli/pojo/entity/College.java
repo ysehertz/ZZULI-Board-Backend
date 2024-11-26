@@ -1,5 +1,7 @@
 package zzuli.pojo.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Data;
 
@@ -15,7 +17,10 @@ import lombok.Data;
 @Data
 @Builder
 public class College {
+    @JsonProperty("college_id")
     private int collegeId;
+    @JsonIgnore
     private int schoolId;
+    @JsonProperty("name")
     private String collegeName;
 }
