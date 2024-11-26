@@ -11,6 +11,8 @@ import zzuli.pojo.dto.SetClassDTO;
 import zzuli.pojo.entity.Clazz;
 import zzuli.service.ClassService;
 
+import java.util.List;
+
 /**
  * ClassName: ClassServiceImpl
  * Package: zzuli.service.impl
@@ -52,5 +54,10 @@ public class ClassServiceImpl implements ClassService {
     public void deleteClass(int classId) {
         classMapper.deleteClass(classId);
         collageMapper.deleteCollageByClassId(classId);
+    }
+
+    @Override
+    public List<Clazz> list(int collegeId) {
+        return classMapper.list(collegeId);
     }
 }

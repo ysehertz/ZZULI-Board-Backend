@@ -24,5 +24,8 @@
     <delete id="deleteClassByCollageId">
         delete from classes where college_id = #{collageId}
     </delete>
+    <select id="list" resultType="zzuli.pojo.entity.Clazz">
+        select * from classes where college_id = #{collageId}
+    </select>
 
 </mapper>

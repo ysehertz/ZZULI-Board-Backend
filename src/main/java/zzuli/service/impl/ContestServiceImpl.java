@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sun.xml.bind.v2.TODO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -128,19 +129,35 @@ public class ContestServiceImpl implements ContestService {
         Timestamp now = new Timestamp(System.currentTimeMillis());
         // 将比赛截止时间转为时间戳
         Timestamp end = contest.getEndTime();
-        boolean isFrozen = contest.isFrozen()&&new Timestamp(now.getTime() + contest.getFrozenTime()).after(end);
+        boolean isFrozen = contest.isFrozen()&& end.after(now) && new Timestamp(now.getTime() + contest.getFrozenTime()).after(end);
+//        boolean isFrozen = contest.isFrozen();
         if(isFrozen){
             // 遍历哈希keys
             for(String key : keys ){
                 // 获取key对应的value
                 Map<Object, Object> values = redisTemplate.opsForHash().entries(key);
+                // 检查 score 是否为 null，并提供默认值
+                String scoreStr = (String) values.get("score");
+                Integer score =  0; // 默认值为 0
+                if (scoreStr != null) {
+                    try {
+                        // 尝试将字符串转换为 Double
+                        double scoreDouble = Double.parseDouble(scoreStr);
+                        // 将 Double 转换为 Integer
+                        score = (int) scoreDouble;
+                    } catch (NumberFormatException e) {
+                        // 处理转换失败的情况
+                        score = 0;
+                    }
+                }
+
                 if(new Timestamp(Long.parseLong((String)values.get("submit_time")) + contest.getFrozenTime()).after(end)){
                     teamList.add(RecordVO.builder()
                             .record_id((String) values.get("record_id"))
                             .member_id((String) values.get("member_id"))
                             .problem_id((String) values.get("problem_id"))
                             .status("FROZEN")
-                            .score((int) values.get("score"))
+                            .score(score)
                             .language((String) values.get("language"))
                             .submit_time((Timestamp) values.get("submit_time"))
                             .balloon((Boolean) values.get("balloon"))
@@ -152,7 +169,38 @@ public class ContestServiceImpl implements ContestService {
                         .member_id((String) values.get("member_id"))
                         .problem_id((String) values.get("problem_id"))
                         .status((String) values.get("status"))
-                        .score((int) values.get("score"))
+                        .score(score)
+                        .language((String) values.get("language"))
+                        .submit_time((Timestamp) values.get("submit_time"))
+                        .balloon((Boolean) values.get("balloon"))
+                        .build());
+            }
+        }else{
+            // 遍历哈希keys
+            for(String key : keys ){
+                // 获取key对应的value
+                Map<Object, Object> values = redisTemplate.opsForHash().entries(key);
+                // 检查 score 是否为 null，并提供默认值
+                String scoreStr = (String) values.get("score");
+                Integer score =  0; // 默认值为 0
+                if (scoreStr != null) {
+                    try {
+                        // 尝试将字符串转换为 Double
+                        double scoreDouble = Double.parseDouble(scoreStr);
+                        // 将 Double 转换为 Integer
+                        score = (int) scoreDouble;
+                    } catch (NumberFormatException e) {
+                        // 处理转换失败的情况
+                        score = 0;
+                    }
+                }
+
+                teamList.add(RecordVO.builder()
+                        .record_id((String) values.get("record_id"))
+                        .member_id((String) values.get("member_id"))
+                        .problem_id((String) values.get("problem_id"))
+                        .status((String) values.get("status"))
+                        .score(score)
                         .language((String) values.get("language"))
                         .submit_time((Timestamp) values.get("submit_time"))
                         .balloon((Boolean) values.get("balloon"))

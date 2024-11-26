@@ -24,4 +24,7 @@
     <select id="getCollageIdsBySchoolId" resultType="java.lang.Integer">
         select college_id from colleges where school_id = #{schoolId}
     </select>
+    <select id="list" resultType="zzuli.pojo.entity.College">
+        select * from colleges where school_id = #{schoolId}
+    </select>
 </mapper>

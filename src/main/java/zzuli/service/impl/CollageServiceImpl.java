@@ -11,8 +11,10 @@ import zzuli.mapper.ClassMapper;
 import zzuli.mapper.CollageMapper;
 import zzuli.mapper.SchoolMapper;
 import zzuli.pojo.dto.CreateCollageDTO;
+import zzuli.pojo.entity.College;
 import zzuli.service.CollageService;
 
+import java.util.List;
 import java.util.prefs.BackingStoreException;
 
 /**
@@ -56,5 +58,10 @@ public class CollageServiceImpl implements CollageService {
     @Override
     public void deleteCollage(int collageId) {
         classMapper.deleteClassByCollageId(collageId);
+    }
+
+    @Override
+    public List<College> list(int schoolId) {
+        return collageMapper.list(schoolId);
     }
 }

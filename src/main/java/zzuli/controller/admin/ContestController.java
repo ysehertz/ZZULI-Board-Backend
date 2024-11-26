@@ -69,11 +69,22 @@ public class ContestController {
         return Result.success(null);
     }
 
+    /**
+     * 修改比赛信息
+     * @param contestId
+     * @param dto
+     * @return
+     */
     @PostMapping("/set")
     public Result<Integer> setContest(
             @RequestParam(name = "contest_id") String contestId,
-            @RequestBody CreateContestDTO DTO){
-        contestService.setContest(contestId,DTO);
+            @RequestBody CreateContestDTO dto){
+        contestService.setContest(contestId,dto);
+
+        // 更新比赛信息
+        contestService.UpContest(dto);
+        // 更新测评记录
+        contestService.getRecord(dto.getId(),dto.getJsession(),dto.getPTASession());
         return Result.success(null);
     }
 }

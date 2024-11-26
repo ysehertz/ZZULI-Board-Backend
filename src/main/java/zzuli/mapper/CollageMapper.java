@@ -2,6 +2,7 @@ package zzuli.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 import zzuli.pojo.dto.CreateCollageDTO;
+import zzuli.pojo.entity.College;
 
 import java.util.List;
 
@@ -30,4 +31,5 @@ public interface CollageMapper {
 
     void deleteCollageBySchoolId(int schoolId);
 
+    List<College> list(int schoolId);
 }

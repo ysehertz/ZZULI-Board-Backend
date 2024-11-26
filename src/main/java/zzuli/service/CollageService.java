@@ -1,6 +1,9 @@
 package zzuli.service;
 
 import zzuli.pojo.dto.CreateCollageDTO;
+import zzuli.pojo.entity.College;
+
+import java.util.List;
 
 /**
  * ClassName: CollageService
@@ -17,4 +20,6 @@ public interface CollageService {
     void setCollage(int collageId, String name);
 
     void deleteCollage(int collageId);
+
+    List<College> list(int schoolId);
 }

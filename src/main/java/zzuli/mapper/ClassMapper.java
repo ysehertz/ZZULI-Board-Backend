@@ -26,4 +26,5 @@ public interface ClassMapper {
 
     void deleteClassByCollageId(int collageId);
 
+    List<Clazz> list(int collegeId);
 }
