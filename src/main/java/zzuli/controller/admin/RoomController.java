@@ -5,7 +5,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import zzuli.common.result.Result;
 import zzuli.pojo.dto.SetRoomDTO;
+import zzuli.pojo.vo.RoomVO;
 import zzuli.service.RoomService;
+
+import java.util.Map;
 
 /**
  * ClassName: RoomController
@@ -38,7 +41,7 @@ public class RoomController {
      * @return
      */
     @PostMapping("/set")
-    public Result<Object> setRoom(@RequestParam(name = "room_id") String roomId,
+    public Result<Object> setRoom(@RequestParam(name = "room_id") int roomId,
                                   @RequestBody SetRoomDTO setRoomDTO) {
         roomService.setRoom(roomId, setRoomDTO);
         return Result.success(null);
@@ -46,13 +49,14 @@ public class RoomController {
 
     /**
      * 创建考场
-     * @param roomId
+     * @param contestId
+     * @param setRoomDTO
      * @return
      */
     @PostMapping("/create")
-    public Result<Object> createRoom(@RequestParam(name = "room_id") int roomId,
-                                     @RequestBody SetRoomDTO setRoomDTO) {
-        roomService.createRoom(roomId,setRoomDTO);
-        return Result.success(null);
+    public Result<Map> createRoom(@RequestParam(name = "contest_id") String contestId,
+                                  @RequestBody SetRoomDTO setRoomDTO) {
+        int id = roomService.createRoom(contestId, setRoomDTO);
+        return Result.success(Map.of("room_id", id));
     }
 }

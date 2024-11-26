@@ -22,9 +22,11 @@ public interface RoomMapper {
 
     void deleteRoom(String roomId);
 
-    void setRoom(String roomId, SetRoomDTO DTO);
 
-    void createRoom(Room room);
 
     void deleteRoomByContestID(String contestId);
+
+    void setRoom(Room room);
+
+    void createRoom(Room room);
 }

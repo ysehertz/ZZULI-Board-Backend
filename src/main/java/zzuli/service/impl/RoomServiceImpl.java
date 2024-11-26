@@ -62,18 +62,24 @@ public class RoomServiceImpl implements RoomService {
      * @param setRoomDTO
      */
     @Override
-    public void setRoom(String roomId, SetRoomDTO setRoomDTO) {
-        roomMapper.setRoom(roomId, setRoomDTO);
+    public void setRoom(int roomId, SetRoomDTO setRoomDTO) {
+        Room room = Room.builder()
+                .roomId(roomId)
+                .roomName(setRoomDTO.getName())
+                .roomSize(setRoomDTO.getSize())
+                .build();
+        roomMapper.setRoom(room);
     }
 
     @Override
-    public void createRoom(int roomId, SetRoomDTO setRoomDTO) {
+    public int createRoom(String contestID,SetRoomDTO setRoomDTO) {
         Room room = Room.builder()
-                .roomId(roomId)
+                .contestId(contestID)
                 .roomSize(setRoomDTO.getSize())
                 .roomName(setRoomDTO.getName())
                 .build();
         roomMapper.createRoom(room);
+        return room.getRoomId();
     }
 
     @Override

@@ -19,9 +19,9 @@ public interface RoomService {
 
     void deleteRoom(String roomId);
 
-    void setRoom(String roomId, SetRoomDTO setRoomDTO);
+    void setRoom(int roomId, SetRoomDTO setRoomDTO);
 
-    void createRoom(int roomId, SetRoomDTO setRoomDTO);
+    int createRoom(String contestID, SetRoomDTO setRoomDTO);
 
     void deleteRoomByContestID(String contestId);
 }
