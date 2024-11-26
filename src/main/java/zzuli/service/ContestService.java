@@ -6,10 +6,7 @@ import zzuli.pojo.dto.CreateContestDTO;
 import zzuli.pojo.dto.RegisterTeamDTO;
 import zzuli.pojo.dto.SingleDTO;
 import zzuli.pojo.entity.PTASession;
-import zzuli.pojo.vo.ContestListVO;
-import zzuli.pojo.vo.ContestVO;
-import zzuli.pojo.vo.RecordVO;
-import zzuli.pojo.vo.RegisterTeamVO;
+import zzuli.pojo.vo.*;
 
 import java.util.List;
 
@@ -53,4 +50,6 @@ public interface ContestService {
     void synchrodata(String contestId);
 
     PTASession getPTASession(String contestId);
+
+    ContestAdminVO AdminConfig(String contestId);
 }

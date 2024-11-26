@@ -1,6 +1,7 @@
 package zzuli.controller.admin;
 
 import com.sun.xml.bind.v2.TODO;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.jdbc.Null;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import zzuli.common.result.Result;
 import zzuli.pojo.dto.CreateContestDTO;
+import zzuli.pojo.entity.Contest;
+import zzuli.pojo.vo.ContestAdminVO;
+import zzuli.pojo.vo.ContestVO;
 import zzuli.service.ContestService;
 import zzuli.service.MemberService;
 import zzuli.service.RoomService;
@@ -43,6 +47,8 @@ public class ContestController {
      */
     @PostMapping("/create")
     public Result<Integer> CreateContest(@RequestBody CreateContestDTO dto){
+        // 打印比赛开始时间
+        log.info("比赛开始时间:{}",dto.getStart_time());
         // 创建比赛
         contestService.CreateContest(dto);
         // 更新比赛信息
@@ -67,6 +73,17 @@ public class ContestController {
         // 删除比赛
         contestService.deleteContest(contestId);
         return Result.success(null);
+    }
+
+    /**
+     * 获取全部比赛信息
+     * @param contestId
+     * @return
+     */
+    @GetMapping("/config")
+    public Result<ContestAdminVO> AdminConfigContest(@RequestParam(name = "contest_id") String contestId){
+
+        return Result.success(contestService.AdminConfig(contestId));
     }
 
     /**

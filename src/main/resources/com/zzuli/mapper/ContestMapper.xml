@@ -1,18 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="zzuli.mapper.ContestMapper">
-    <insert id="saveTeam" keyProperty="teamId">
-        insert into teams ( team_name, team_coach, team_class,contest_id) values
-        ( #{teamName}, #{teamCoach}, #{teamClass}, #{contestId});
-    </insert>
+
+<insert id="saveTeam" useGeneratedKeys="true" keyProperty="teamId" keyColumn="team_id">
+    insert into teams (team_name, team_coach, team_class, contest_id) values
+    (#{teamName}, #{teamCoach}, #{teamClass}, #{contestId});
+</insert>
 
     <insert id="saveMember">
         insert into members (team_id, contest_id,member_id,member_name,member_school,member_college,member_class,official) values
         (#{teamId}, #{contestId},#{memberId},#{memberName},#{memberSchool},#{memberCollege},#{memberClass},#{official});
     </insert>
     <insert id="createContest">
-        insert into contests (contest_id, contest_type, PTASession, Jesession, title, contests.start_time,contests.end_time,reg_type,reg_start_time,reg_end_time,reg_off_code,reg_unoff_code,banner,penalty,frozen,frozen_time,balloon_color) values
-        (#{contestId}, #{contestType}, #{PTASession}, #{jsession}, #{title},#{startTime},#{endTime}, #{regType}, #{regStartTime}, #{regEndTime}, #{regOffCode}, #{regUnoffConde}, #{banner}, #{penalty}, #{frozen}, #{frozenTime}, #{balloonColor});
+        insert into contests (contest_id, contest_type, PTASession, Jesession, title, contests.start_time,contests.end_time,reg_type,reg_start_time,reg_end_time,reg_off_code,reg_unoff_code,extra,balloon_color) values
+        (#{contestId}, #{contestType}, #{PTASession}, #{jsession}, #{title},#{startTime},#{endTime}, #{regType}, #{regStartTime}, #{regEndTime}, #{regOffCode}, #{regUnoffConde},#{extra}, #{balloonColor});
     </insert>
 
     <update id="setProblemList">
@@ -22,7 +23,7 @@
     </update>
     <update id="setContest">
         update contests
-        set contest_type = #{contestType}, PTASession = #{PTASession}, Jesession = #{jsession}, title = #{title}, reg_type = #{regType}, reg_start_time = #{regStartTime}, reg_end_time = #{regEndTime}, reg_off_code = #{regOffCode}, reg_unoff_code = #{regUnoffConde}, banner = #{banner}, penalty = #{penalty}, frozen = #{frozen}, frozen_time = #{frozenTime}, balloon_color = #{balloonColor}
+        set contest_type = #{contestType}, PTASession = #{PTASession}, Jesession = #{Jesession}, title = #{title}, reg_type = #{regType}, reg_start_time = #{regStartTime}, reg_end_time = #{regEndTime}, reg_off_code = #{regOffCode}, reg_unoff_code = #{regUnoffConde},extra = #{extra}, balloon_color = #{balloonColor}
         where contest_id = #{contestId};
     </update>
     <delete id="deleteContest">
