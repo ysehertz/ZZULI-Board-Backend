@@ -45,7 +45,7 @@ public class GetRecordTask {
                 contestService.getRecord(contestId , jsession, ptaService);
             } else {
                 System.out.println("Stopping scheduled task: " + LocalDateTime.now());
-                scheduler.shutdown();
+                shutdownScheduler();
             }
         };
         scheduler.scheduleAtFixedRate(task, 0, period, TimeUnit.SECONDS);

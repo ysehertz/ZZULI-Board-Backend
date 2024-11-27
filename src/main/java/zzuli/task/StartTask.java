@@ -35,7 +35,7 @@ public class StartTask {
     private RedisTemplate redisTemplate;
 
     // 检查是否有比赛将要开始，为要开始的比赛创建任务
-//    @Scheduled(cron = "0/${task.frequency.start} * * * * ? ")
+    @Scheduled(cron = "0/${task.frequency.start} * * * * ? ")
     public void checkStart() {
         //获取key为notBegin的map类型的所有数据
         Map<String, String> notBeginMap = redisTemplate.opsForHash().entries("notBegin");
@@ -44,16 +44,17 @@ public class StartTask {
             contestList.forEach(contest -> {
                 // 如果该比赛还未结束
                 if(contest.getEndTime().getTime() > System.currentTimeMillis()) {
+                    notBeginMap.put(contest.getContestId(), contest.getStartTime().getTime()+"="+contest.getEndTime().getTime());
                     //将比赛id和比赛开始时间存入到key为notBegin的map中
-                    redisTemplate.opsForHash().put("notBegin", contest.getContestId(), contest.getStartTime().toString()+"-"+contest.getEndTime().toString());
+                    redisTemplate.opsForHash().put("notBegin", contest.getContestId(), contest.getStartTime().getTime()+"="+contest.getEndTime().getTime());
                 }
             });
-            return;
+//            return;
         }
         //遍历map
         notBeginMap.forEach((k, v) -> {
             // 分别获取字符串v中“-”前后的数据
-            String[] parts = v.split("-");
+            String[] parts = v.split("=");
             String startTime = parts[0];
             String endTime = parts[1];
 
