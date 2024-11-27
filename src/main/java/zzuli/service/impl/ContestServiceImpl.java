@@ -371,7 +371,7 @@ public class ContestServiceImpl implements ContestService {
         contestMapper.createContest(contest);
 
         if(dto.getEnd_time().toEpochMilli()> System.currentTimeMillis()){
-            redisTemplate.opsForHash().put("notBegin", dto.getId(), dto.getStart_time().toString()+"-"+dto.getEnd_time().toString());
+            redisTemplate.opsForHash().put("notBegin", dto.getId(), dto.getStart_time().toString()+"="+dto.getEnd_time().toString());
         }
     }
 
