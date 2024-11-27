@@ -1,5 +1,6 @@
 package zzuli.pojo.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,6 +22,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AdminLoginDTO implements Serializable {
+    @JsonProperty("username")
     private String uname; // 用户名
     private String password; // 密码
 }

@@ -35,8 +35,8 @@ public class AdminServiceImpl implements AdminService {
 
         Admin admin = adminMapper.selectAdminByUname(username);
 
-        if (admin != null && admin.getPassword().equals(password)) {
-            throw new PasswordErrorException(MessageConstant.PASSWORD_ERROR);
+        if (admin == null ) {
+            throw new PasswordErrorException("用户不存在");
         }
 
         password = DigestUtils.md5DigestAsHex(password.getBytes());
