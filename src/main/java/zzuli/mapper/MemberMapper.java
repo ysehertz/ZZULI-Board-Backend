@@ -2,6 +2,7 @@ package zzuli.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 import zzuli.pojo.dto.SetMemberDTO;
+import zzuli.pojo.dto.SetTeamDTO;
 import zzuli.pojo.entity.Member;
 
 import java.util.List;
@@ -17,9 +18,8 @@ import java.util.List;
  */
 @Mapper
 public interface MemberMapper {
-    List<Member> list();
 
-    void setMember(String contestId, String memberId, SetMemberDTO setMemberDTO);
+    void setMember(SetMemberDTO setMemberDTO);
 
     void delMember(String contestId, String memberId);
 
@@ -32,4 +32,8 @@ public interface MemberMapper {
     void upRoomIdToNull(String roomId);
 
     void deleteMemberByContestID(String contestId);
+
+    List<Member> list(String contestId);
+
+    void setMemberFromTeam(SetTeamDTO setTeamDTO);
 }
