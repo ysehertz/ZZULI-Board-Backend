@@ -4,19 +4,19 @@
     <update id="setTeam">
         update teams
         <set>
-            <if test="teamName != null">
-                team_name = #{teamName},
+            <if test="name != null">
+                team_name = #{name},
             </if>
-            <if test="teamCoach != null">
-                team_coach = #{teamCoach},
+            <if test="coach != null">
+                team_coach = #{coach},
             </if>
-            <if test="teamCollage!= null">
-                team_collage = #{teamCollege},
+            <if test="collage!= null">
+                team_college = #{collage},
             </if>
-            <if test="teamClass != null">
-                team_class = #{teamClass},
+            <if test="clazz != null">
+                team_class = #{clazz},
             </if>
-            <if test="Official != null">
+            <if test="official != null">
                 official = #{official},
             </if>
         </set>
@@ -25,6 +25,10 @@
     <delete id="delTeam">
         delete from teams
         where team_id = #{teamId}
+    </delete>
+    <delete id="delTeamFormContest">
+        delete from teams
+        where contest_id = #{contestId}
     </delete>
 
     <select id="getListByContestId" resultType="zzuli.pojo.entity.Team">

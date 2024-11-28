@@ -37,6 +37,7 @@ public class TeamServiceImpl implements TeamService {
                     .name(team.getTeamName())
                     .coach(team.getTeamCoach())
                     .college(team.getTeamCollege())
+                    .school(team.getTeamSchool())
                     .clazz(team.getTeamClass())
                     .official(team.isOfficial())
                     .build()).collect(Collectors.toList());
@@ -46,21 +47,12 @@ public class TeamServiceImpl implements TeamService {
 
     /**
      * 设置队伍信息
-     * @param teamId 队伍id
      * @param setTeamDTO 队伍信息
      */
     @Override
-    public void setTeam(String teamId, SetTeamDTO setTeamDTO) {
-        Team team = Team.builder()
-                .teamId(Integer.parseInt(teamId))
-                .teamName(setTeamDTO.getName())
-                .teamCoach(setTeamDTO.getCoach())
-                .teamSchool(setTeamDTO.getSchool())
-                .teamCollege(setTeamDTO.getCollage())
-                .teamClass(setTeamDTO.getClazz())
-                .official(setTeamDTO.isOfficial())
-                .build();
-        teamMapper.setTeam(team);
+    public void setTeam(SetTeamDTO setTeamDTO) {
+        memberMapper.setMemberFromTeam(setTeamDTO);
+        teamMapper.setTeam(setTeamDTO);
     }
 
     /**
@@ -71,5 +63,10 @@ public class TeamServiceImpl implements TeamService {
     public void delTeam(String teamId) {
         memberMapper.delMemberByTeamId(teamId);
         teamMapper.delTeam(teamId);
+    }
+
+    @Override
+    public void delTeamFormContest(String contestId) {
+        teamMapper.delTeamFormContest(contestId);
     }
 }

@@ -17,7 +17,10 @@ import java.util.List;
 public interface TeamService {
     List<TeamListVO> getListByContestId(String contestId);
 
-    void setTeam(String teamId, SetTeamDTO setTeamDTO);
+    void setTeam(SetTeamDTO setTeamDTO);
 
     void delTeam(String teamId);
+
+    void delTeamFormContest(String contestId);
+
 }

@@ -1,6 +1,7 @@
 package zzuli.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
+import zzuli.pojo.dto.SetTeamDTO;
 import zzuli.pojo.entity.Team;
 
 import java.util.List;
@@ -18,7 +19,9 @@ import java.util.List;
 public interface TeamMapper {
     List<Team> getListByContestId(String contestId);
 
-    void setTeam(Team team);
+    void setTeam(SetTeamDTO team);
 
     void delTeam(String teamId);
+
+    void delTeamFormContest(String contestId);
 }

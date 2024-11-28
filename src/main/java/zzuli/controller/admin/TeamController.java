@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import zzuli.common.result.Result;
+import zzuli.mapper.MemberMapper;
 import zzuli.pojo.dto.SetTeamDTO;
 import zzuli.service.MemberService;
 import zzuli.service.TeamService;
@@ -38,8 +39,8 @@ public class TeamController {
     @PostMapping("/set")
     public Result<Integer> setTeam(@RequestParam(name = "team_id") String teamId,
                                    @RequestBody SetTeamDTO setTeamDTO) {
-        teamService.setTeam(teamId,setTeamDTO);
-
+        setTeamDTO.setTeamId(teamId);
+        teamService.setTeam(setTeamDTO);
         return Result.success(null);
     }
 
