@@ -1,5 +1,6 @@
 package zzuli.controller.admin;
 
+import com.alibaba.druid.sql.visitor.functions.Now;
 import com.sun.xml.bind.v2.TODO;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import zzuli.common.Context.BaseContext;
 import zzuli.common.result.Result;
 import zzuli.pojo.dto.CreateContestDTO;
 import zzuli.pojo.entity.Contest;
@@ -18,6 +20,8 @@ import zzuli.service.ContestService;
 import zzuli.service.MemberService;
 import zzuli.service.RoomService;
 import zzuli.service.TeamService;
+
+import java.time.Instant;
 
 /**
  * ClassName: ContestController
@@ -36,8 +40,7 @@ import zzuli.service.TeamService;
 @RequestMapping("/api/admin/contest")
 @Slf4j
 public class ContestController {
-    @Autowired
-    private RedisTemplate redisTemplate;
+
     @Autowired
     private TeamService teamService;
     @Autowired
@@ -54,8 +57,7 @@ public class ContestController {
      */
     @PostMapping("/create")
     public Result<Integer> CreateContest(@RequestBody CreateContestDTO dto){
-        // 打印比赛开始时间
-        log.info("比赛开始时间:{}",dto.getStart_time());
+        log.info("创建比赛;管理员：{}，比赛名：{}",BaseContext.getCurrentId(),dto.getTitle());
         // 创建比赛
         contestService.CreateContest(dto);
 //        // 等待10s
@@ -70,6 +72,7 @@ public class ContestController {
 //        contestService.getRecord(dto.getId(),dto.getJsession(),dto.getPTASession());
         //异步更新比赛信息
         contestService.UpContestAsync(dto);
+        log.info("创建比赛成功;管理员：{}，比赛名：{}",BaseContext.getCurrentId(), dto.getTitle());
         return  Result.success(null);
     }
 
@@ -81,6 +84,7 @@ public class ContestController {
 
     @PostMapping("/delete")
     public Result<Integer> deleteContest(@RequestParam(name = "contest_id") String contestId) {
+        log.info("删除比赛;管理员：{}，比赛名：{}",BaseContext.getCurrentId(),contestId);
         // 删除学生
         memberService.deleteMemberByContestID(contestId);
         //队伍
@@ -92,6 +96,7 @@ public class ContestController {
 
         // 删除比赛
         contestService.deleteContest(contestId);
+        log.info("删除比赛成功;管理员：{}，比赛名：{}",BaseContext.getCurrentId(),contestId);
         return Result.success(null);
     }
 
@@ -102,7 +107,6 @@ public class ContestController {
      */
     @GetMapping("/config")
     public Result<ContestAdminVO> AdminConfigContest(@RequestParam(name = "contest_id") String contestId){
-
         return Result.success(contestService.AdminConfig(contestId));
     }
 
@@ -116,12 +120,14 @@ public class ContestController {
     public Result<Integer> setContest(
             @RequestParam(name = "contest_id") String contestId,
             @RequestBody CreateContestDTO dto){
+        log.info("修改比赛;管理员：{}，比赛名：{}",BaseContext.getCurrentId(), contestId);
         contestService.setContest(contestId,dto);
 
         // 更新比赛信息
         contestService.UpContest(dto);
         // 更新测评记录
         contestService.getRecord(dto.getId(),dto.getJsession(),dto.getPTASession());
+        log.info("修改比赛成功;管理员：{}，比赛名：{}",BaseContext.getCurrentId(),contestId);
         return Result.success(null);
     }
 }

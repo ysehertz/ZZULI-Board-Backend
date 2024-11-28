@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
+import zzuli.common.Context.BaseContext;
 import zzuli.common.result.Result;
 import zzuli.pojo.dto.CreateCollageDTO;
 import zzuli.service.CollageService;
@@ -39,6 +40,7 @@ public class CollegeController {
             @RequestBody CreateCollageDTO dto ) {
         dto.setSchool_id(schoolId);
         collegeService.createCollage(dto);
+        log.info("创建学院;管理员：{}，学院名：{}",BaseContext.getCurrentId(),dto.getName());
         return Result.success(null);
     }
 
@@ -52,6 +54,7 @@ public class CollegeController {
     public Result<Integer> setCollage(@RequestParam(name = "college_id") int collageId,
                             @RequestBody CreateCollageDTO dto) {
         collegeService.setCollage(collageId,dto.getName());
+        log.info("修改学院名字;管理员：{}，学院ID：{}，学院名：{}",BaseContext.getCurrentId(),collageId,dto.getName());
         return Result.success(null);
     }
 
@@ -63,6 +66,7 @@ public class CollegeController {
     @PostMapping("/delete")
     public Result<Integer> deleteCollage(@RequestParam(name = "collage_id") int collageId) {
         collegeService.deleteCollage(collageId);
+        log.info("删除学院;管理员：{}，学院ID：{}", BaseContext.getCurrentId(),collageId);
         return Result.success(null);
     }
 }

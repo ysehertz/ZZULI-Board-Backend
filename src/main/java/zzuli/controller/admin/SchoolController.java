@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import zzuli.common.Context.BaseContext;
 import zzuli.common.result.Result;
 import zzuli.pojo.dto.CreateSchoolDTO;
 import zzuli.service.SchoolService;
@@ -31,6 +32,7 @@ public class SchoolController {
     @PostMapping("/create")
     public Result<Integer> createSchool(@RequestBody CreateSchoolDTO dto) {
         schoolService.createSchool(dto);
+        log.info("创建学校;管理员：{}，学校名：{}",BaseContext.getCurrentId(),dto.getName());
         return Result.success(null);
     }
 
@@ -44,6 +46,7 @@ public class SchoolController {
     public Result<Integer> setSchool(@RequestParam("school_id") int schoolId,
                                     @RequestBody CreateSchoolDTO dto) {
         schoolService.setSchool(schoolId ,dto);
+        log.info("修改学校信息;管理员：{}，学校ID：{}",BaseContext.getCurrentId(),schoolId);
         return Result.success(null);
     }
 
@@ -55,6 +58,7 @@ public class SchoolController {
     @PostMapping("/delete")
     public Result<Integer> deleteSchool(@RequestParam("school_id") int schoolId) {
         schoolService.deleteSchool(schoolId);
+        log.info("删除学校;管理员：{}，学校ID：{}",BaseContext.getCurrentId(),schoolId);
         return Result.success(null);
     }
 
