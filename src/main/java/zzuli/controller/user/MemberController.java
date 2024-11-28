@@ -39,7 +39,7 @@ public class MemberController {
      */
     @GetMapping("/list")
     public Result<List<MemberListVO>> list(@RequestParam(name = "contest_id") String contestId) {
-        List<MemberListVO> memberVOList = memberService.list();
+        List<MemberListVO> memberVOList = memberService.list(contestId);
         return Result.success(memberVOList);
     }
 }

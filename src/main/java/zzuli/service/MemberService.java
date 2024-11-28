@@ -16,11 +16,12 @@ import java.util.List;
  */
 public interface MemberService {
 
-    List<MemberListVO> list();
+    List<MemberListVO> list(String contestId);
 
-    void setMember(String contestId, String memberId, SetMemberDTO setMemberDTO);
+    void setMember( SetMemberDTO setMemberDTO);
 
     void delMember(String contestId, String memberId);
 
     void deleteMemberByContestID(String contestId);
+
 }

@@ -38,7 +38,9 @@ public class MemberController {
     public Result<Integer> setMember(@RequestParam(name = "contest_id") String contestId,
                             @RequestParam(name = "member_id") String memberId,
                             @RequestBody SetMemberDTO setMemberDTO) {
-        memberService.setMember(contestId,memberId,setMemberDTO);
+        setMemberDTO.setMember_id(memberId);
+        setMemberDTO.setContest_id(contestId);
+        memberService.setMember(setMemberDTO);
 
         return Result.success(null);
     }

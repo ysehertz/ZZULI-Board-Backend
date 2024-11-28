@@ -28,8 +28,8 @@ public class MemberServiceImpl implements MemberService {
     private MemberMapper memberMapper;
 
     @Override
-    public List<MemberListVO> list() {
-        List<Member> members = memberMapper.list();
+    public List<MemberListVO> list(String contestId) {
+        List<Member> members = memberMapper.list(contestId);
         if (members != null) {
             return members.stream().map(member -> MemberListVO.builder()
                     .team_id(member.getTeamId())
@@ -46,8 +46,8 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public void setMember(String contestId, String memberId, SetMemberDTO setMemberDTO) {
-        memberMapper.setMember(contestId, memberId, setMemberDTO);
+    public void setMember( SetMemberDTO setMemberDTO) {
+        memberMapper.setMember(setMemberDTO);
     }
 
     @Override
