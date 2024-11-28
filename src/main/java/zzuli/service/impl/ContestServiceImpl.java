@@ -88,11 +88,11 @@ public class ContestServiceImpl implements ContestService {
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode rootNode = null;
             List<Balloon> balloonsList = null;
-            List<Problem> problemList = null;
+            List<ProblemVO> problemList = null;
             try {
 //                rootNode = objectMapper.readTree(contest.getBalloonColor());
                 balloonsList = objectMapper.readValue(objectMapper.readTree(contest.getBalloonColor()).toString(), new TypeReference<List<Balloon>>() {});
-                problemList = objectMapper.readValue(objectMapper.readTree(contest.getProblemList()).toString(), new TypeReference<List<Problem>>() {});
+                problemList = objectMapper.readValue(objectMapper.readTree(contest.getProblemList()).toString(), new TypeReference<List<ProblemVO>>() {});
             } catch (JsonProcessingException e) {
                 throw new RuntimeException(e);
             }
@@ -272,6 +272,7 @@ public class ContestServiceImpl implements ContestService {
                 .teamCoach(registerTeamDTO.getCoach())
                 .teamSchool(registerTeamDTO.getSchool())
                 .teamClass(registerTeamDTO.getClazz())
+                .teamCollege(registerTeamDTO.getCollege())
                 .build();
         if (contest != null) {
             //校验邀请码
@@ -282,7 +283,7 @@ public class ContestServiceImpl implements ContestService {
                 // 校外成员设置为非正式队伍
                 team.setOfficial(false);
             } else {
-                throw new RuntimeException(MessageConstant.REG_CODE_ERROR);
+                throw new BaseException(MessageConstant.REG_CODE_ERROR);
             }
             // 保存队伍信息
             contestMapper.saveTeam(team);
@@ -298,8 +299,8 @@ public class ContestServiceImpl implements ContestService {
                         .contestId(contestId)
                         .memberId(memberDTO.getId())
                         .memberSchool(registerTeamDTO.getSchool())
-                        .memberClass(memberDTO.getClazz())
-                        .memberCollege(memberDTO.getCollege())
+                        .memberClass(registerTeamDTO.getClazz())
+                        .memberCollege(registerTeamDTO.getCollege())
                         .official(team.isOfficial())
                         .build();
                 contestMapper.saveMember(member);
@@ -371,7 +372,7 @@ public class ContestServiceImpl implements ContestService {
         contestMapper.createContest(contest);
 
         if(dto.getEnd_time().toEpochMilli()> System.currentTimeMillis()){
-            redisTemplate.opsForHash().put("notBegin", dto.getId(), dto.getStart_time().toString()+"="+dto.getEnd_time().toString());
+            redisTemplate.opsForHash().put("notBegin", dto.getId(), contest.getStartTime().getTime()+"="+contest.getEndTime().getTime());
         }
     }
 
@@ -417,43 +418,51 @@ public class ContestServiceImpl implements ContestService {
     @Override
     public void UpContest(CreateContestDTO dto) {
 
-
        String getProblem = ptaService.getProblemList(dto);
-        try {
-            JsonNode jsonNode = new ObjectMapper().readTree(getProblem);
-            JsonNode data = jsonNode.get("problemSetProblems");
-            List<Problem> problemList = objectMapper.readValue(data.toString(), new TypeReference<List<Problem>>() {});
-            getProblem = objectMapper.writeValueAsString(problemList);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-
+       if(!getProblem.isEmpty()){
+           try {
+               JsonNode jsonNode = new ObjectMapper().readTree(getProblem);
+               JsonNode data = jsonNode.get("problemSetProblems");
+               List<Problem> problemList = objectMapper.readValue(data.toString(), new TypeReference<List<Problem>>() {});
+               List<ProblemVO> problemVOS =problemList.stream().map(problem -> ProblemVO.builder()
+                       .id(problem.getId())
+                       .score(problem.getScore())
+                       .name(problem.getName())
+                       .build()).collect(Collectors.toList());
+               getProblem = objectMapper.writeValueAsString(problemVOS);
+           } catch (JsonProcessingException e) {
+               throw new RuntimeException(e);
+           }
+       }else{
+           getProblem = "{}";
+       }
         contestMapper.setProblemList(dto.getId(),getProblem);
 
        String result = ptaService.UpMemberId(dto.getId(),dto.getJsession(),dto.getPTASession(),"0");
-       log.info("result::{}",result);
-       // 判断循环次数
-       int cot = -1;
+       if(!result.isEmpty()){
+           // 判断循环次数
+           int cot = -1;
 
-        try {
-            JsonNode jsonNode = new ObjectMapper().readTree(result);
-            int total = jsonNode.get("total").asInt();
-            do {
-                if(++cot > 0){
-                    result = ptaService.UpMemberId(dto.getId(),dto.getJsession(),dto.getPTASession(),Integer.toString(cot));
-                    jsonNode = new ObjectMapper().readTree(result);
-                }
-                JsonNode data = jsonNode.get("members");
-                for (JsonNode node : data) {
-                    String studentNumber = node.get("studentUser").get("studentNumber").asText();
-                    String id = node.get("user").get("id").asText();
-                    //存到redis的map中，key为S+考场ID，value为studentNumber对应id
-                    redisTemplate.opsForHash().put("S"+dto.getId(),id , studentNumber);
-                }
-            }while ((total -= 200) > 0);
-        } catch (Exception e) {
-            throw new RuntimeException(MessageConstant.JSON_PARSE_ERROR);
-        }
+           try {
+               JsonNode jsonNode = new ObjectMapper().readTree(result);
+               int total = jsonNode.get("total").asInt();
+               do {
+                   if(++cot > 0){
+                       result = ptaService.UpMemberId(dto.getId(),dto.getJsession(),dto.getPTASession(),Integer.toString(cot));
+                       jsonNode = new ObjectMapper().readTree(result);
+                   }
+                   JsonNode data = jsonNode.get("members");
+                   for (JsonNode node : data) {
+                       String studentNumber = node.get("studentUser").get("studentNumber").asText();
+                       String id = node.get("user").get("id").asText();
+                       //存到redis的map中，key为S+考场ID，value为studentNumber对应id
+                       redisTemplate.opsForHash().put("S"+dto.getId(),id, studentNumber);
+                   }
+               }while ((total -= 200) > 0);
+           } catch (Exception e) {
+               throw new RuntimeException(MessageConstant.JSON_PARSE_ERROR);
+           }
+       }
     }
 
     /**
@@ -474,64 +483,69 @@ public class ContestServiceImpl implements ContestService {
         String result = ptaService.getRecord(contestId, jsession, PTASession, before);
 
 //        List<Record> recordL = new ArrayList<>();
-        // 继续增量标志
-        boolean flag = true;
-        // 每次获取数据的首数据标志
-        int firstLab = 1;
+        if(!result.isEmpty()){
 
-        while (flag) {
+            // 继续增量标志
+            boolean flag = true;
+            // 每次获取数据的首数据标志
+            int firstLab = 1;
 
-            try {
-                if(firstLab != 1){
-                    result = ptaService.getRecord(contestId, jsession, PTASession, before);
-                }
-                JsonNode rootNode = objectMapper.readTree(result);
-                JsonNode addressNode = rootNode.path("submissions");
-                List<Record> recordList = objectMapper.readValue(addressNode.toString(), new TypeReference<List<Record>>() {});
-                int size = recordList.size();
-                if(size != 0){
-                    before = recordList.get(size-1).getId();
-                    for(Record record : recordList){
-                        if( recordTab.equals(record.getId())){
-                            flag = false;
-                            break;
+            while (flag) {
+
+                try {
+                    if(firstLab != 1){
+                        result = ptaService.getRecord(contestId, jsession, PTASession, before);
+                    }
+                    JsonNode rootNode = objectMapper.readTree(result);
+                    JsonNode addressNode = rootNode.path("submissions");
+                    List<Record> recordList = objectMapper.readValue(addressNode.toString(), new TypeReference<List<Record>>() {});
+                    int size = recordList.size();
+                    if(size != 0){
+                        before = recordList.get(size-1).getId();
+                        for(Record record : recordList){
+                            if( recordTab.equals(record.getId())){
+                                flag = false;
+                                break;
+                            }
+                            if(firstLab == 1){
+                                redisTemplate.opsForValue().set("R"+contestId, record.getId());
+                                firstLab = 0;
+                            }
+                            //获取redis中S+考场ID的map类型中key为record.getUserId()的value
+                            String studentNumber = (String) redisTemplate.opsForHash().get("S"+contestId, record.getUserId());
+//                            String studentNumber = (String) redisTemplate.opsForHash().get("S"+contestId, record.getUserId());
+                            record.setMemberId(studentNumber);
+                            record.setContestId(contestId);
+                            if(studentNumber != null){
+
+                                recordMapper.addRecord(record);
+
+                                // 将数据存到redis当中
+                                Map<String, Object> KVMap = new HashMap<>();
+                                KVMap.put("record_id", record.getId());
+                                KVMap.put("member_id", record.getMemberId());
+                                KVMap.put("problem_id", record.getProblemSetProblemId());
+                                KVMap.put("status", record.getStatus());
+                                KVMap.put("score", record.getScore());
+                                KVMap.put("language", record.getCompiler());
+                                KVMap.put("submit_time", record.getSubmitAt());
+                                KVMap.put("balloon", false);
+
+                                redisTemplate.opsForHash().putAll("C"+contestId+":"+record.getId(), KVMap);
+                            }
                         }
-                        if(firstLab == 1){
-                            redisTemplate.opsForValue().set("R"+contestId, record.getId());
-                            firstLab = 0;
-                        }
-                        record.setMemberId((String)redisTemplate.opsForHash().get("S"+contestId, record.getUserId()));
-                        record.setContestId(contestId);
 
-                        recordMapper.addRecord(record);
-
-//                        recordL.add(record);
-
-
-                        // 将数据存到redis当中
-                        Map<String, Object> KVMap = new HashMap<>();
-                        KVMap.put("record_id", record.getId());
-                        KVMap.put("member_id", record.getMemberId());
-                        KVMap.put("problem_id", record.getProblemSetProblemId());
-                        KVMap.put("status", record.getStatus());
-                        KVMap.put("score", record.getScore());
-                        KVMap.put("language", record.getCompiler());
-                        KVMap.put("submit_time", record.getSubmitAt());
-                        KVMap.put("balloon", false);
-
-                        redisTemplate.opsForHash().putAll("C"+contestId+":"+record.getId(), KVMap);
+                    }
+                    if(size < 200){
+                        flag = false;
                     }
 
-                }
-                if(size < 200){
-                    flag = false;
+                } catch (JsonProcessingException e) {
+                    throw new RuntimeException(MessageConstant.JSON_PARSE_ERROR);
                 }
 
-            } catch (JsonProcessingException e) {
-                throw new RuntimeException(MessageConstant.JSON_PARSE_ERROR);
+
             }
-
-
         }
 //        recordMapper.addRecords(recordL);
 
@@ -617,6 +631,39 @@ public class ContestServiceImpl implements ContestService {
                     .build();
         }
         return null;
+    }
+
+    /**
+     * 删除评测记录
+     * @param contestId
+     */
+    @Override
+    public void deleteRecordByContestID(String contestId) {
+        recordMapper.deleteAllBycontestId(contestId);
+        redisTemplate.keys("C"+contestId+":*").forEach(key -> redisTemplate.delete(key));
+        redisTemplate.delete("R"+contestId);
+        redisTemplate.delete("S"+contestId);
+    }
+
+    /**
+     * 异步获取测评记录
+     * @param id
+     * @param jsession
+     * @param ptaSession
+     */
+    @Override
+    public void getRecordAsync(String id, String jsession, String ptaSession) {
+        new Thread(() -> {
+            getRecord(id, jsession, ptaSession);
+        }).start();
+    }
+
+    @Override
+    public void UpContestAsync(CreateContestDTO dto) {
+        new Thread(() -> {
+            UpContest(dto);
+            getRecord(dto.getId(),dto.getJsession(),dto.getPTASession());
+        }).start();
     }
 
 }

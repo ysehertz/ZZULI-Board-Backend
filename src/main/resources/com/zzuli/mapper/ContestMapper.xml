@@ -3,8 +3,8 @@
 <mapper namespace="zzuli.mapper.ContestMapper">
 
 <insert id="saveTeam" useGeneratedKeys="true" keyProperty="teamId" keyColumn="team_id">
-    insert into teams (team_name, team_coach, team_class, contest_id) values
-    (#{teamName}, #{teamCoach}, #{teamClass}, #{contestId});
+    insert into teams (team_name, team_coach, team_class,team_school, team_college,contest_id) values
+    (#{teamName}, #{teamCoach}, #{teamClass},#{teamSchool}, #{teamCollege},#{contestId});
 </insert>
 
     <insert id="saveMember">
@@ -13,7 +13,7 @@
     </insert>
     <insert id="createContest">
         insert into contests (contest_id, contest_type, PTASession, Jesession, title, contests.start_time,contests.end_time,reg_type,reg_start_time,reg_end_time,reg_off_code,reg_unoff_code,extra,balloon_color) values
-        (#{contestId}, #{contestType}, #{PTASession}, #{jsession}, #{title},#{startTime},#{endTime}, #{regType}, #{regStartTime}, #{regEndTime}, #{regOffCode}, #{regUnoffConde},#{extra}, #{balloonColor});
+        (#{contestId}, #{contestType}, #{PTASession}, #{Jesession}, #{title},#{startTime},#{endTime}, #{regType}, #{regStartTime}, #{regEndTime}, #{regOffCode}, #{regUnoffCode},#{extra}, #{balloonColor});
     </insert>
 
     <update id="setProblemList">

@@ -1,6 +1,7 @@
 package zzuli.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import org.springframework.data.redis.core.RedisTemplate;
 import zzuli.common.result.Result;
 import zzuli.pojo.dto.CreateContestDTO;
 import zzuli.pojo.dto.RegisterTeamDTO;
@@ -52,4 +53,10 @@ public interface ContestService {
     PTASession getPTASession(String contestId);
 
     ContestAdminVO AdminConfig(String contestId);
+
+    void deleteRecordByContestID(String contestId);
+
+    void getRecordAsync(String id, String jsession, String ptaSession);
+
+    void UpContestAsync(CreateContestDTO dto);
 }
