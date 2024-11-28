@@ -34,7 +34,9 @@ public class ClassController {
      * @return
      */
     @PostMapping("/create")
-    public Result<Integer> createClass(@RequestBody CreateClassDTO dto) {
+    public Result<Integer> createClass(@RequestParam("college_id") int collageId,
+            @RequestBody CreateClassDTO dto) {
+        dto.setCollage_id(collageId);
         classService.createClass(dto);
         return Result.success(null);
     }

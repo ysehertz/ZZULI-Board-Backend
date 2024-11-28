@@ -22,7 +22,7 @@ import zzuli.service.CollageService;
  * 学院管理
  */
 @RestController("adminCollageController")
-@RequestMapping("/api/admin/collage")
+@RequestMapping("/api/admin/college")
 @Slf4j
 public class CollegeController {
     @Autowired
@@ -31,11 +31,13 @@ public class CollegeController {
 
     /**
      * 创建学院
-     * @param dto
+     * @param
      * @return
      */
     @PostMapping("/create")
-    public Result<Integer> createCollage(@RequestBody CreateCollageDTO dto) {
+    public Result<Integer> createCollage(@RequestParam("school_id") int schoolId,
+            @RequestBody CreateCollageDTO dto ) {
+        dto.setSchool_id(schoolId);
         collegeService.createCollage(dto);
         return Result.success(null);
     }
@@ -43,13 +45,13 @@ public class CollegeController {
     /**
      * 修改学院名字
      * @param collageId
-     * @param name
+     * @param
      * @return
      */
     @PostMapping("/set")
-    public Result<Integer> setCollage(@RequestParam(name = "collage_id") int collageId,
-                            @RequestBody String name) {
-        collegeService.setCollage(collageId,name);
+    public Result<Integer> setCollage(@RequestParam(name = "college_id") int collageId,
+                            @RequestBody CreateCollageDTO dto) {
+        collegeService.setCollage(collageId,dto.getName());
         return Result.success(null);
     }
 
