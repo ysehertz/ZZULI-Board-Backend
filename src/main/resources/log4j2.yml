@@ -1,0 +1,62 @@
+Configuration:
+  status: warn
+  monitorInterval: 30 # 每 30 秒检查一次配置文件的变化
+
+  Properties:
+    log-path: logs # 日志文件目录
+    log-pattern: "%d{yyyy-MM-dd HH:mm:ss} [%t] %-5level %logger{36} - %msg%n"
+
+  Appenders:
+    # 控制台输出
+    - Console:
+        name: Console
+        target: SYSTEM_OUT
+        layout:
+          PatternLayout:
+            pattern: "${log-pattern}"
+
+      # 文件输出
+      File:
+        name: AdminFile
+        fileName: "${log-path}/AdminFile.log"
+        append: true
+        layout:
+          PatternLayout:
+            pattern: "${log-pattern}"
+
+#      # 按时间滚动的日志文件
+#      RollingFile:
+#        name: RollingFile
+#        fileName: "${log-path}/rolling-app.log"
+#        filePattern: "${log-path}/rolling-app-%d{yyyy-MM-dd}.log"
+#        policies:
+#          TimeBasedTriggeringPolicy:
+#            interval: 1 # 每天滚动一次
+#          SizeBasedTriggeringPolicy:
+#            size: "10MB" # 文件达到 10MB 时滚动
+#        layout:
+#          PatternLayout:
+#            pattern: "${log-pattern}"
+
+  Loggers:
+    # 自定义包的日志级别
+    Logger:
+      - name: zzuli.controller.admin
+        level: info
+        additivity: false
+        AppenderRef:
+          - ref: File
+          - ref: Console
+#      - name: zzuli.task
+#        level: info
+#        additivity: false
+#        AppenderRef:
+#          - ref: RollingFile
+#          - ref: Console
+
+
+    # 设置根日志器
+    Root:
+      level: info
+      AppenderRef:
+        - ref: Console

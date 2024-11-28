@@ -1,0 +1,42 @@
+<Configuration status="warn" monitorInterval="30">
+    <Properties>
+        <Property name="log-path">logs</Property>
+        <Property name="log-pattern">%d{yyyy-MM-dd HH:mm:ss} [%t] %-5level %logger{36} - %msg%n</Property>
+    </Properties>
+
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="${log-pattern}" />
+        </Console>
+
+        <File name="AdminFile" fileName="${log-path}/AdminFile.log" append="true">
+            <PatternLayout pattern="${log-pattern}" />
+        </File>
+
+        <RollingFile name="RollingFile" fileName="${log-path}/rolling-app.log" filePattern="${log-path}/rolling-app-%d{yyyy-MM-dd}.log">
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" />
+                <SizeBasedTriggeringPolicy size="10MB" />
+            </Policies>
+            <PatternLayout pattern="${log-pattern}" />
+        </RollingFile>
+    </Appenders>
+
+    <Loggers>
+        <Logger name="zzuli.controller.admin" level="info" additivity="false">
+            <AppenderRef ref="AdminFile" />
+        </Logger>
+        <Logger name="zzuli.interceptor" level="info" additivity="false">
+            <AppenderRef ref="AdminFile" />
+        </Logger>
+<!--        <Logger name="zzuli.task" level="info" additivity="false">-->
+<!--            <AppenderRef ref="RollingFile" />-->
+<!--            <AppenderRef ref="Console" />-->
+<!--        </Logger>-->
+
+        <Root level="info">
+            <AppenderRef ref="Console" />
+            <AppenderRef ref="RollingFile" />
+        </Root>
+    </Loggers>
+</Configuration>

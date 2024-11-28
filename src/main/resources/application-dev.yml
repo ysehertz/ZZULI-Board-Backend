@@ -1,4 +1,4 @@
-isljq:
+board:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     host: 192.168.200.130

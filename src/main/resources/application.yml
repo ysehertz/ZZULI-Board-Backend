@@ -8,15 +8,15 @@ spring:
     allow-circular-references: true
   datasource:
     druid:
-      driver-class-name: ${isljq.datasource.driver-class-name}
-      url: jdbc:mysql://${isljq.datasource.host}:${isljq.datasource.port}/${isljq.datasource.database}?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=CONVERT_TO_NULL&useSSL=false&allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=UTF-8
-      username: ${isljq.datasource.username}
-      password: ${isljq.datasource.password}
+      driver-class-name: ${board.datasource.driver-class-name}
+      url: jdbc:mysql://${board.datasource.host}:${board.datasource.port}/${board.datasource.database}?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=CONVERT_TO_NULL&useSSL=false&allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=UTF-8
+      username: ${board.datasource.username}
+      password: ${board.datasource.password}
   redis:
-    host: ${isljq.redis.host}
-    port: ${isljq.redis.port}
-    database: ${isljq.redis.database}
-    password: ${isljq.redis.password}
+    host: ${board.redis.host}
+    port: ${board.redis.port}
+    database: ${board.redis.database}
+    password: ${board.redis.password}
 
 mybatis:
   #mapper配置文件
@@ -27,12 +27,24 @@ mybatis:
     map-underscore-to-camel-case: true
     
 
+
+#日志配置
+#为zzuli.controller.admin设置自己的日志配置
+
+
+
+#logging:
+#  level:
+#    zzuli.controller.admin: info
+##      mapper: debug
+##      service: info
+##      controller: info
+#  file:
+#    name: logs/admin.log
+
+
 logging:
-  level:
-    zzuli:
-#      mapper: debug
-      service: info
-      controller: info
+  config: classpath:log4j2.xml
 
 
 zzuli:
