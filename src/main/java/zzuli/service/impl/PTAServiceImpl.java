@@ -45,7 +45,7 @@ public class PTAServiceImpl implements PTAService {
         headerMap.put("Accept-Encoding","gzip, deflate, br, zstd");
         headerMap.put("Accept","application/json;charset=UTF-8");
         String result = HttpClientUtil.doGet(url, paramMap, headerMap);
-        if(result!=null){
+        if(result==null){
             log.error("访问PTA失败，不能成功获取题目列表");
         }
         return result;
