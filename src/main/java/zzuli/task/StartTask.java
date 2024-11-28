@@ -58,6 +58,7 @@ public class StartTask {
             String startTime = parts[0];
             String endTime = parts[1];
 
+            log.info("当前时间{}",System.currentTimeMillis());
             //如果比赛开始时间小于当前时间加上5分钟
             if (Long.parseLong(startTime) <= System.currentTimeMillis() + 300000) {
                 //为要开始的比赛创建定时任务
