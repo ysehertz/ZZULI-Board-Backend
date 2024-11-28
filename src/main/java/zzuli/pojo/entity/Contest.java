@@ -39,7 +39,7 @@ public class Contest  implements Serializable {
     @JsonProperty("end_time")
     private java.sql.Timestamp endTime;
     @JsonProperty("reg_type")
-    private String regType;
+    private int regType;
     @JsonProperty("reg_start_time")
     private java.sql.Timestamp regStartTime;
     @JsonProperty("reg_end_time")

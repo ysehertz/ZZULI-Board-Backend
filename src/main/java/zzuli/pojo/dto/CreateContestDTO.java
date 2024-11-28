@@ -30,12 +30,12 @@ public class CreateContestDTO implements Serializable {
     private String type;
     @JsonProperty("PTASession")
     private String PTASession;
-    @JsonProperty("jsession")
+    @JsonProperty("Jsession")
     private String Jsession;
     private String title;
     private Instant start_time;
     private Instant end_time;
-    private String reg_type;
+    private int reg_type;
     private Instant reg_start_time;
     private Instant reg_end_time;
     private String reg_off_code;

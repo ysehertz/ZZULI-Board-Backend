@@ -41,7 +41,7 @@ public class ContestAdminVO implements Serializable {
     @JsonProperty("end_time")
     private Long endTime;
     @JsonProperty("reg_type")
-    private String regType;
+    private int regType;
     @JsonProperty("reg_start_time")
     private Long regStartTime;
     @JsonProperty("reg_end_time")

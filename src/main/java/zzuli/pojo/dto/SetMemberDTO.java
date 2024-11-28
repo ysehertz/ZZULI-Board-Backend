@@ -22,6 +22,8 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Builder
 public class SetMemberDTO implements Serializable {
+    private String contest_id;
+    private String member_id;
     private String id;
     private String name;
     private String school;

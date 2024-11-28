@@ -1,5 +1,6 @@
-package zzuli.pojo.dto;
+package zzuli.pojo.vo;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,28 +8,23 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
- * ClassName: RegisterTeamVO
+ * ClassName: problemVO
  * Package: zzuli.pojo.vo
  * Description:
  *
  * @author fuchen
  * @version 1.0
- * @createTime 2024/11/11
+ * @createTime 2024/11/28
  */
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class RegisterTeamDTO implements Serializable {
-    private String reg_code;
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class ProblemVO implements Serializable {
+    private String id;
     private String name;
-    private String coach;
-    private String school;
-    private String college;
-    @JsonProperty("class")
-    private String clazz;
-    private List<MemberDTO> members;
+    private String score;
 }

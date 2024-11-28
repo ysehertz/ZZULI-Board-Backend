@@ -21,6 +21,7 @@ public class TeamListVO implements Serializable {
     private int id;
     private String name;
     private String coach;
+    private String school;
     private String college;
     @JsonProperty("class")
     private String clazz;

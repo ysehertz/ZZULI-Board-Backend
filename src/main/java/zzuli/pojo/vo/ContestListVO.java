@@ -27,7 +27,7 @@ public class ContestListVO implements Serializable {
     private String title;
     private Long start_time;
     private Long end_time;
-    private String reg_type;
+    private int reg_type;
     private Long reg_start_time;
     private Long reg_end_time;
 }

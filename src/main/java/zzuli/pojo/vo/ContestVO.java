@@ -29,10 +29,10 @@ public class ContestVO implements Serializable {
     private String title;
     private Long start_time;
     private Long end_time;
-    private String reg_type;
+    private int reg_type;
     private Long reg_start_time;
     private  Long reg_end_time;
     private JsonNode extra;
     private List<Balloon> balloon_color;
-    private List<Problem> problem_list;
+    private List<ProblemVO> problem_list;
 }

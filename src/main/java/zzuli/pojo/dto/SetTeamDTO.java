@@ -22,6 +22,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Builder
 public class SetTeamDTO implements Serializable {
+    private String teamId;
     private String name;
     private String coach;
     private String school;
