@@ -3,7 +3,7 @@ package zzuli.mapper;
 import org.apache.ibatis.annotations.Mapper;
 import zzuli.pojo.entity.Contest;
 import zzuli.pojo.entity.Member;
-import zzuli.pojo.entity.PTASession;
+import zzuli.pojo.pta.PTASession;
 import zzuli.pojo.entity.Team;
 
 import java.util.List;

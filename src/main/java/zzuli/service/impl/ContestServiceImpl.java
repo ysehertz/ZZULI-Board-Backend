@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sun.xml.bind.v2.TODO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -21,11 +20,12 @@ import zzuli.pojo.dto.RegisterTeamDTO;
 import zzuli.pojo.dto.SingleDTO;
 import zzuli.pojo.entity.*;
 import zzuli.pojo.entity.Record;
+import zzuli.pojo.pta.PTAProblem;
+import zzuli.pojo.pta.PTASession;
 import zzuli.pojo.vo.*;
 import zzuli.service.ContestService;
 import zzuli.service.PTAService;
 
-import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -88,20 +88,24 @@ public class ContestServiceImpl implements ContestService {
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode rootNode = null;
             List<Balloon> balloonsList = null;
-            List<ProblemVO> problemList = null;
+            List<ProblemVO> ptaProblems = null;
             try {
-//                rootNode = objectMapper.readTree(contest.getBalloonColor());
                 balloonsList = objectMapper.readValue(objectMapper.readTree(contest.getBalloonColor()).toString(), new TypeReference<List<Balloon>>() {});
-                problemList = objectMapper.readValue(objectMapper.readTree(contest.getProblemList()).toString(), new TypeReference<List<ProblemVO>>() {});
+                ptaProblems = objectMapper.readValue(objectMapper.readTree(contest.getProblemList()).toString(), new TypeReference<List<ProblemVO>>() {});
             } catch (JsonProcessingException e) {
-                throw new RuntimeException(e);
+                log.error(e.getMessage());
             }
             JsonNode extra = null;
             try {
                 extra = objectMapper.readTree(contest.getExtra());
             } catch (JsonProcessingException e) {
-                throw new RuntimeException(e);
+                log.error(e.getMessage());
             }
+            List<ProblemVO> problemList = ptaProblems.stream().map(ptaProblem -> ProblemVO.builder()
+                    .id(ptaProblem.getId())
+                    .score(ptaProblem.getScore())
+                    .name(ptaProblem.getName())
+                    .build()).collect(Collectors.toList());
             return ContestVO.builder()
                     .id(contest.getContestId())
                     .type(contest.getContestType())
@@ -141,7 +145,7 @@ public class ContestServiceImpl implements ContestService {
                 JsonNode jsonNode =  objectMapper.readTree(contest.getExtra());
                 icpcContestExtraData = objectMapper.readValue(jsonNode.toString(), ICPCContestExtraData.class);
             } catch (JsonProcessingException e) {
-                throw new RuntimeException(e);
+                log.error(e.getMessage());
             }
             boolean isFrozen = icpcContestExtraData.isFrozen()&& end.after(now) && new Timestamp(now.getTime() + icpcContestExtraData.getFrozenTime()).after(end);
             if(isFrozen){
@@ -175,18 +179,18 @@ public class ContestServiceImpl implements ContestService {
                                 .submit_time(((Timestamp) values.get("submit_time")).toInstant().getEpochSecond())
                                 .balloon((Boolean) values.get("balloon"))
                                 .build());
+                    }else {
+                        teamList.add(RecordVO.builder()
+                                .record_id((String) values.get("record_id"))
+                                .member_id((String) values.get("member_id"))
+                                .problem_id((String) values.get("problem_id"))
+                                .status((String) values.get("status"))
+                                .score(score)
+                                .language((String) values.get("language"))
+                                .submit_time(((Timestamp) values.get("submit_time")).toInstant().getEpochSecond())
+                                .balloon((Boolean) values.get("balloon"))
+                                .build());
                     }
-
-                    teamList.add(RecordVO.builder()
-                            .record_id((String) values.get("record_id"))
-                            .member_id((String) values.get("member_id"))
-                            .problem_id((String) values.get("problem_id"))
-                            .status((String) values.get("status"))
-                            .score(score)
-                            .language((String) values.get("language"))
-                            .submit_time(((Timestamp) values.get("submit_time")).toInstant().getEpochSecond())
-                            .balloon((Boolean) values.get("balloon"))
-                            .build());
                 }
             }else{
                 // 遍历哈希keys
@@ -264,7 +268,7 @@ public class ContestServiceImpl implements ContestService {
         Contest contest = contestMapper.getContestById(contestId);
         // 校验当前时间是否在比赛报名时间内
         if (contest.getRegStartTime().after(new Timestamp(System.currentTimeMillis())) || contest.getRegEndTime().before(new Timestamp(System.currentTimeMillis()))) {
-            throw new RuntimeException(MessageConstant.REG_TIME_ERROR);
+            throw new BaseException(MessageConstant.REG_TIME_ERROR);
         }
         Team team = Team.builder()
                 .contestId(contestId)
@@ -294,13 +298,15 @@ public class ContestServiceImpl implements ContestService {
             List<MemberDTO> memberDTOS = registerTeamDTO.getMembers();
             for (MemberDTO memberDTO : memberDTOS) {
                 Member member = Member.builder()
+                        .memberQq(memberDTO.getQq())
+                        .memberPhone(memberDTO.getPhone())
                         .teamId(team.getTeamId())
                         .memberName(memberDTO.getName())
                         .contestId(contestId)
                         .memberId(memberDTO.getId())
                         .memberSchool(registerTeamDTO.getSchool())
-                        .memberClass(registerTeamDTO.getClazz())
-                        .memberCollege(registerTeamDTO.getCollege())
+                        .memberClass(memberDTO.getClazz())
+                        .memberCollege(memberDTO.getCollege())
                         .official(team.isOfficial())
                         .build();
                 contestMapper.saveMember(member);
@@ -357,7 +363,7 @@ public class ContestServiceImpl implements ContestService {
                 .contestId(dto.getId())
                 .contestType(dto.getType())
                 .PTASession(dto.getPTASession())
-                .Jesession(dto.getJsession())
+                .Jsession(dto.getJsession())
                 .title(dto.getTitle())
                 .startTime(Timestamp.from(dto.getStart_time()))
                 .endTime(Timestamp.from(dto.getEnd_time()))
@@ -396,7 +402,7 @@ public class ContestServiceImpl implements ContestService {
                 .contestId(contestId)
                 .contestType(dto.getType())
                 .PTASession(dto.getPTASession())
-                .Jesession(dto.getJsession())
+                .Jsession(dto.getJsession())
                 .title(dto.getTitle())
                 .startTime(Timestamp.from(dto.getStart_time()))
                 .endTime(Timestamp.from(dto.getEnd_time()))
@@ -412,18 +418,20 @@ public class ContestServiceImpl implements ContestService {
     }
 
     /**
-     * 通过PTA更新比赛信息
-     * @param dto 比赛信息
+     * 通过pta更新比赛信息
+     * @param contestId
+     * @param jsession
+     * @param ptaSession
      */
     @Override
-    public void UpContest(CreateContestDTO dto) {
-
-       String getProblem = ptaService.getProblemList(dto);
+    public void UpContest(String contestId,String jsession ,String ptaSession) {
+        //更新题目列表
+       String getProblem = ptaService.getProblemList(contestId,jsession,ptaSession);
        if(!getProblem.isEmpty()){
            try {
                JsonNode jsonNode = new ObjectMapper().readTree(getProblem);
                JsonNode data = jsonNode.get("problemSetProblems");
-               List<Problem> problemList = objectMapper.readValue(data.toString(), new TypeReference<List<Problem>>() {});
+               List<PTAProblem> problemList = objectMapper.readValue(data.toString(), new TypeReference<List<PTAProblem>>() {});
                List<ProblemVO> problemVOS =problemList.stream().map(problem -> ProblemVO.builder()
                        .id(problem.getId())
                        .score(problem.getScore())
@@ -431,14 +439,14 @@ public class ContestServiceImpl implements ContestService {
                        .build()).collect(Collectors.toList());
                getProblem = objectMapper.writeValueAsString(problemVOS);
            } catch (JsonProcessingException e) {
-               throw new RuntimeException(e);
+               log.error(e.getMessage());
            }
        }else{
-           getProblem = "{}";
+           getProblem = "[]";
        }
-        contestMapper.setProblemList(dto.getId(),getProblem);
-
-       String result = ptaService.UpMemberId(dto.getId(),dto.getJsession(),dto.getPTASession(),"0");
+        contestMapper.setProblemList(contestId,getProblem);
+        // 更新考生信息
+       String result = ptaService.UpMemberId(contestId,jsession,ptaSession,"0");
        if(!result.isEmpty()){
            // 判断循环次数
            int cot = -1;
@@ -448,7 +456,7 @@ public class ContestServiceImpl implements ContestService {
                int total = jsonNode.get("total").asInt();
                do {
                    if(++cot > 0){
-                       result = ptaService.UpMemberId(dto.getId(),dto.getJsession(),dto.getPTASession(),Integer.toString(cot));
+                       result = ptaService.UpMemberId(contestId,jsession,ptaSession,Integer.toString(cot));
                        jsonNode = new ObjectMapper().readTree(result);
                    }
                    JsonNode data = jsonNode.get("members");
@@ -456,11 +464,11 @@ public class ContestServiceImpl implements ContestService {
                        String studentNumber = node.get("studentUser").get("studentNumber").asText();
                        String id = node.get("user").get("id").asText();
                        //存到redis的map中，key为S+考场ID，value为studentNumber对应id
-                       redisTemplate.opsForHash().put("S"+dto.getId(),id, studentNumber);
+                       redisTemplate.opsForHash().put("S"+contestId,id, studentNumber);
                    }
                }while ((total -= 200) > 0);
            } catch (Exception e) {
-               throw new RuntimeException(MessageConstant.JSON_PARSE_ERROR);
+                log.error(e.getMessage());
            }
        }
     }
@@ -468,11 +476,12 @@ public class ContestServiceImpl implements ContestService {
     /**
      * 通过PTA获取测评纪录记录
      * @param contestId
-     * @param jsession
+     * @param Jsession
      * @param PTASession
      */
     @Override
-    public void getRecord(String contestId, String jsession, String PTASession) {
+    public void getRecord(String contestId, String Jsession, String PTASession) {
+        Contest contest = contestMapper.getContestById(contestId);
         String recordTab = (String)redisTemplate.opsForValue().getAndSet("R"+contestId, "0");
         if(recordTab == null || recordTab.equals("0")){
             recordTab = "0";
@@ -480,11 +489,9 @@ public class ContestServiceImpl implements ContestService {
         }
         Map<String,String> paramMap = new HashMap<>();
         String before = "0";
-        String result = ptaService.getRecord(contestId, jsession, PTASession, before);
+        String result = ptaService.getRecord(contestId, Jsession, PTASession, before);
 
-//        List<Record> recordL = new ArrayList<>();
         if(!result.isEmpty()){
-
             // 继续增量标志
             boolean flag = true;
             // 每次获取数据的首数据标志
@@ -494,7 +501,7 @@ public class ContestServiceImpl implements ContestService {
 
                 try {
                     if(firstLab != 1){
-                        result = ptaService.getRecord(contestId, jsession, PTASession, before);
+                        result = ptaService.getRecord(contestId, Jsession, PTASession, before);
                     }
                     JsonNode rootNode = objectMapper.readTree(result);
                     JsonNode addressNode = rootNode.path("submissions");
@@ -513,43 +520,45 @@ public class ContestServiceImpl implements ContestService {
                             }
                             //获取redis中S+考场ID的map类型中key为record.getUserId()的value
                             String studentNumber = (String) redisTemplate.opsForHash().get("S"+contestId, record.getUserId());
-//                            String studentNumber = (String) redisTemplate.opsForHash().get("S"+contestId, record.getUserId());
                             record.setMemberId(studentNumber);
                             record.setContestId(contestId);
-                            if(studentNumber != null){
-
-                                recordMapper.addRecord(record);
-
-                                // 将数据存到redis当中
-                                Map<String, Object> KVMap = new HashMap<>();
-                                KVMap.put("record_id", record.getId());
-                                KVMap.put("member_id", record.getMemberId());
-                                KVMap.put("problem_id", record.getProblemSetProblemId());
-                                KVMap.put("status", record.getStatus());
-                                KVMap.put("score", record.getScore());
-                                KVMap.put("language", record.getCompiler());
-                                KVMap.put("submit_time", record.getSubmitAt());
-                                KVMap.put("balloon", false);
-
-                                redisTemplate.opsForHash().putAll("C"+contestId+":"+record.getId(), KVMap);
+                            if(contest.getContestType().equals("gplt")) {
+                                Integer oldScore = (Integer) redisTemplate.opsForHash().get("C"+contestId+":"+studentNumber+":"+record.getProblemSetProblemId(), "score");
+                                if(oldScore == null){
+                                    updateRecord(record);
+                                }else if(record.getScore() >= oldScore ){
+                                    updateRecord(record);
+                                }else {
+                                    recordMapper.addRecord(record);
+                                }
+                            }else {
+                                updateRecord(record);
                             }
                         }
-
                     }
                     if(size < 200){
                         flag = false;
                     }
-
                 } catch (JsonProcessingException e) {
-                    throw new RuntimeException(MessageConstant.JSON_PARSE_ERROR);
+                    log.error(e.getMessage());
                 }
-
-
             }
         }
-//        recordMapper.addRecords(recordL);
+    }
 
-
+    private void updateRecord(Record record){
+        recordMapper.addRecord(record);
+        // 将数据存到redis当中
+        Map<String, Object> KVMap = new HashMap<>();
+        KVMap.put("record_id", record.getId());
+        KVMap.put("member_id", record.getMemberId());
+        KVMap.put("problem_id", record.getProblemSetProblemId());
+        KVMap.put("status", record.getStatus());
+        KVMap.put("score", record.getScore());
+        KVMap.put("language", record.getCompiler());
+        KVMap.put("submit_time", record.getSubmitAt());
+        KVMap.put("balloon", false);
+        redisTemplate.opsForHash().putAll("C"+record.getContestId()+":"+record.getMemberId()+":"+record.getProblemSetProblemId(), KVMap);
     }
 
     /**
@@ -576,7 +585,7 @@ public class ContestServiceImpl implements ContestService {
                 KVMap.put("language", record.getCompiler());
                 KVMap.put("submit_time", record.getSubmitAt());
                 KVMap.put("balloon", false);
-                redisTemplate.opsForHash().putAll("C"+contestId+":"+record.getId(), KVMap);
+                redisTemplate.opsForHash().putAll("C"+contestId+":"+record.getMemberId()+":"+record.getProblemSetProblemId(), KVMap);
             }
         }
     }
@@ -598,24 +607,25 @@ public class ContestServiceImpl implements ContestService {
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode rootNode = null;
             List<Balloon> balloonsList = null;
-            List<Problem> problemList = null;
+            List<ProblemVO> problemList = null;
             try {
                 rootNode = objectMapper.readTree(contest.getBalloonColor());
                 balloonsList = objectMapper.readValue(rootNode.toString(), new TypeReference<List<Balloon>>() {});
-                problemList = objectMapper.readValue(contest.getProblemList(), new TypeReference<List<Problem>>() {});
+                if(!contest.getProblemList().equals("{}"))
+                 problemList = objectMapper.readValue(contest.getProblemList(), new TypeReference<List<ProblemVO>>() {});
             } catch (JsonProcessingException e) {
-                throw new RuntimeException(e);
+                log.error(e.getMessage());
             }
             JsonNode extra = null;
             try {
                 extra = objectMapper.readTree(contest.getExtra());
             } catch (JsonProcessingException e) {
-                throw new RuntimeException(e);
+                log.error(e.getMessage());
             }
             return ContestAdminVO.builder()
                     .contestId(contest.getContestId())
                     .PTASession(contest.getPTASession())
-                    .jesession(contest.getJesession())
+                    .Jsession(contest.getJsession())
                     .contestType(contest.getContestType())
                     .title(contest.getTitle())
                     .startTime(contest.getStartTime().toInstant().getEpochSecond())
@@ -624,7 +634,7 @@ public class ContestServiceImpl implements ContestService {
                     .regStartTime(contest.getRegStartTime().toInstant().getEpochSecond())
                     .regEndTime(contest.getRegEndTime().toInstant().getEpochSecond())
                     .regOffCode(contest.getRegOffCode())
-                    .regUnoffConde(contest.getRegUnoffCode())
+                    .regUnoffCode(contest.getRegUnoffCode())
                     .extra(extra)
                     .balloonColor(balloonsList)
                     .problemList(problemList)
@@ -641,6 +651,7 @@ public class ContestServiceImpl implements ContestService {
     public void deleteRecordByContestID(String contestId) {
         recordMapper.deleteAllBycontestId(contestId);
         redisTemplate.keys("C"+contestId+":*").forEach(key -> redisTemplate.delete(key));
+        redisTemplate.opsForHash().delete("notBegin", contestId);
         redisTemplate.delete("R"+contestId);
         redisTemplate.delete("S"+contestId);
     }
@@ -648,20 +659,20 @@ public class ContestServiceImpl implements ContestService {
     /**
      * 异步获取测评记录
      * @param id
-     * @param jsession
+     * @param Jsession
      * @param ptaSession
      */
     @Override
-    public void getRecordAsync(String id, String jsession, String ptaSession) {
+    public void getRecordAsync(String id, String Jsession, String ptaSession) {
         new Thread(() -> {
-            getRecord(id, jsession, ptaSession);
+            getRecord(id, Jsession, ptaSession);
         }).start();
     }
 
     @Override
     public void UpContestAsync(CreateContestDTO dto) {
         new Thread(() -> {
-            UpContest(dto);
+            UpContest(dto.getId(),dto.getJsession(),dto.getPTASession());
             getRecord(dto.getId(),dto.getJsession(),dto.getPTASession());
         }).start();
     }

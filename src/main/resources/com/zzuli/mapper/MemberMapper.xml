@@ -15,7 +15,7 @@
 
     <update id="setMember">
         UPDATE members
-        SET member_class = #{clazz},member_school = #{school},member_college = #{college},official = #{official},member_id =#{id},member_name= #{name},room_id = #{room_id}
+        SET member_class = #{clazz},member_school = #{school},member_college = #{college},official = #{official},member_id =#{id},member_name= #{name},room_id = #{room_id},member_qq = #{qq} , member_phone = #{phone}
         WHERE contest_id = #{contest_id} AND member_id = #{member_id}
     </update>
 

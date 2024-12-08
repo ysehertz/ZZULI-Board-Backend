@@ -60,16 +60,7 @@ public class ContestController {
         log.info("创建比赛;管理员：{}，比赛名：{}",BaseContext.getCurrentId(),dto.getTitle());
         // 创建比赛
         contestService.CreateContest(dto);
-//        // 等待10s
-//        try {
-//            Thread.sleep(5000);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-        // 更新比赛信息
-//        contestService.UpContest(dto);
-        // 更新测评记录
-//        contestService.getRecord(dto.getId(),dto.getJsession(),dto.getPTASession());
+
         //异步更新比赛信息
         contestService.UpContestAsync(dto);
         log.info("创建比赛成功;管理员：{}，比赛名：{}",BaseContext.getCurrentId(), dto.getTitle());
@@ -122,11 +113,8 @@ public class ContestController {
             @RequestBody CreateContestDTO dto){
         log.info("修改比赛;管理员：{}，比赛名：{}",BaseContext.getCurrentId(), contestId);
         contestService.setContest(contestId,dto);
-
-        // 更新比赛信息
-        contestService.UpContest(dto);
-        // 更新测评记录
-        contestService.getRecord(dto.getId(),dto.getJsession(),dto.getPTASession());
+        //异步更新比赛信息
+        contestService.UpContestAsync(dto);
         log.info("修改比赛成功;管理员：{}，比赛名：{}",BaseContext.getCurrentId(),contestId);
         return Result.success(null);
     }

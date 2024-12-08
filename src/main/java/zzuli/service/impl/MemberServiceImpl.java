@@ -32,6 +32,8 @@ public class MemberServiceImpl implements MemberService {
         List<Member> members = memberMapper.list(contestId);
         if (members != null) {
             return members.stream().map(member -> MemberListVO.builder()
+                    .qq(member.getMemberQq())
+                    .phone(member.getMemberPhone())
                     .team_id(member.getTeamId())
                     .room_id(member.getRoomId())
                     .member_id(member.getMemberId())

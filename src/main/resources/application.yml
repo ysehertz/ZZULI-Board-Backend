@@ -1,3 +1,6 @@
+#spring:
+#  config:
+#    import: optional:file:./external-config.yml
 server:
   port: 9875
 
@@ -25,26 +28,15 @@ mybatis:
   configuration:
     #开启驼峰命名
     map-underscore-to-camel-case: true
-    
 
 
-#日志配置
-#为zzuli.controller.admin设置自己的日志配置
-
-
-
-#logging:
-#  level:
-#    zzuli.controller.admin: info
-##      mapper: debug
-##      service: info
-##      controller: info
-#  file:
-#    name: logs/admin.log
 
 
 logging:
   config: classpath:log4j2.xml
+#  level:
+#    zzuli:
+#      mapper: debug
 
 
 zzuli:
@@ -58,7 +50,7 @@ zzuli:
 
 task:
   frequency:
-    getRecord: 5
+    getRecord: 2
     start: 120
 
 

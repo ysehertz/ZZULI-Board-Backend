@@ -23,4 +23,7 @@
     <select id="getRecordByContestId" resultType="zzuli.pojo.entity.Record">
         select * from records where contest_id = #{contestId}
     </select>
+    <select id="getRecordByContestIdAndMemberIdAndProblemId" resultType="zzuli.pojo.entity.Record">
+        select * from records where contest_id = #{contestId} and member_id = #{studentNumber} and problem_id = #{problemSetProblemId}
+    </select>
 </mapper>

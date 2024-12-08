@@ -18,6 +18,8 @@ import java.io.Serializable;
 @Data
 @Builder
 public class MemberListVO implements Serializable {
+    private String qq;
+    private String phone;
     private int team_id;
     private int room_id;
     private String member_id;

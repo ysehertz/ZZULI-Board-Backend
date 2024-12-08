@@ -7,7 +7,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import zzuli.pojo.entity.Balloon;
-import zzuli.pojo.entity.Problem;
 
 import java.io.Serializable;
 import java.time.Instant;
@@ -31,7 +30,8 @@ public class ContestAdminVO implements Serializable {
     private String contestId;
     @JsonProperty("PTASession")
     private String PTASession;
-    private String jesession;
+    @JsonProperty("Jsession")
+    private String Jsession;
     @JsonProperty("type")
     private String contestType;
     @JsonProperty("title")
@@ -49,12 +49,10 @@ public class ContestAdminVO implements Serializable {
     @JsonProperty("reg_off_code")
     private String regOffCode;
     @JsonProperty("reg_unoff_code")
-    private String regUnoffConde;
-
+    private String regUnoffCode;
     private JsonNode extra;
-
     @JsonProperty("balloon_color")
     private List<Balloon> balloonColor;
     @JsonProperty("problem_list")
-    private List<Problem> problemList;
+    private List<ProblemVO> problemList;
 }

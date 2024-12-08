@@ -30,18 +30,20 @@ public class PTAServiceImpl implements PTAService {
 
     /**
      * 获取题目列表
-     * @param dto
+     * @param contestId
+     * @param Jsession
+     * @param PTASession
      * @return
      */
     @Override
-    public String getProblemList(CreateContestDTO dto) {
-        String url = "https://pintia.cn/api/problem-sets/"+dto.getId()+"/preview/problems";
+    public String getProblemList(String contestId, String Jsession, String PTASession) {
+        String url = "https://pintia.cn/api/problem-sets/"+contestId+"/preview/problems";
         Map<String, String> paramMap = new HashMap<>();
         paramMap.put("problem_type", "PROGRAMMING");
         paramMap.put("page", "0");
         paramMap.put("limit","100");
         Map<String, String> headerMap = new HashMap<>();
-        headerMap.put("Cookie", "JSESSIONID="+dto.getJsession()+";"+"PTASession="+dto.getPTASession());
+        headerMap.put("Cookie", "JSESSIONID="+Jsession+";"+"PTASession="+PTASession);
         headerMap.put("Accept-Encoding","gzip, deflate, br, zstd");
         headerMap.put("Accept","application/json;charset=UTF-8");
         String result = HttpClientUtil.doGet(url, paramMap, headerMap);
@@ -57,13 +59,13 @@ public class PTAServiceImpl implements PTAService {
      * @param contestId
      */
     @Override
-    public String UpMemberId(String contestId, String jsession, String PTASession,String page) {
+    public String UpMemberId(String contestId, String Jsession, String PTASession,String page) {
         String url = "https://pintia.cn/api/problem-sets/"+contestId+"/exam-members";
         Map<String, String> paramMap = new HashMap<>();
         paramMap.put("limit","200");
         paramMap.put("page",page);
         Map<String, String> headerMap = new HashMap<>();
-        headerMap.put("Cookie", "JSESSIONID="+jsession+";"+"PTASession="+PTASession);
+        headerMap.put("Cookie", "JSESSIONID="+Jsession+";"+"PTASession="+PTASession);
         headerMap.put("Accept-Encoding","gzip, deflate, br, zstd");
         headerMap.put("Accept","application/json;charset=UTF-8");
 
@@ -74,14 +76,22 @@ public class PTAServiceImpl implements PTAService {
         return  result;
     }
 
+    /**
+     * 获取评测记录
+     * @param contestId
+     * @param Jsession
+     * @param ptaSession
+     * @param before
+     * @return
+     */
     @Override
-    public String getRecord(String contestId, String jsession, String ptaSession, String before) {
+    public String getRecord(String contestId, String Jsession, String ptaSession, String before) {
         String url = "https://pintia.cn/api/problem-sets/"+contestId+"/submissions";
         Map<String, String> paramMap = new HashMap<>();
         paramMap.put("limit","200");
         paramMap.put("before",before);
         Map<String, String> headerMap = new HashMap<>();
-        headerMap.put("Cookie", "JSESSIONID="+jsession+";"+"PTASession="+ptaSession);
+        headerMap.put("Cookie", "JSESSIONID="+Jsession+";"+"PTASession="+ptaSession);
         headerMap.put("Accept-Encoding","gzip, deflate, br, zstd");
         headerMap.put("Accept","application/json;charset=UTF-8");
 

@@ -1,12 +1,9 @@
 package zzuli.service;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import org.springframework.data.redis.core.RedisTemplate;
-import zzuli.common.result.Result;
 import zzuli.pojo.dto.CreateContestDTO;
 import zzuli.pojo.dto.RegisterTeamDTO;
 import zzuli.pojo.dto.SingleDTO;
-import zzuli.pojo.entity.PTASession;
+import zzuli.pojo.pta.PTASession;
 import zzuli.pojo.vo.*;
 
 import java.util.List;
@@ -37,15 +34,15 @@ public interface ContestService {
 
     void setContest(String contestId, CreateContestDTO dto);
 
-    void UpContest(CreateContestDTO dto);
+    void UpContest(String contestId,String jsession ,String ptaSession);
 
     /**
      * 获取比赛记录
      * @param contestId 比赛id
-     * @param jsession pta
+     * @param Jsession pta
      * @param PTASession pta
      */
-    void getRecord(String contestId, String jsession, String PTASession);
+    void getRecord(String contestId, String Jsession, String PTASession);
 
     // 同步mysql和redis数据
     void synchrodata(String contestId);
@@ -56,7 +53,7 @@ public interface ContestService {
 
     void deleteRecordByContestID(String contestId);
 
-    void getRecordAsync(String id, String jsession, String ptaSession);
+    void getRecordAsync(String id, String Jsession, String ptaSession);
 
     void UpContestAsync(CreateContestDTO dto);
 }

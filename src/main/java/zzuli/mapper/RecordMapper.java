@@ -18,8 +18,6 @@ import java.util.List;
 public interface RecordMapper {
     void deleteAllBycontestId(String contestId);
 
-
-
     int getNumByContestId(String contestId);
 
     List<Record> getRecordByContestId(String contestId);
@@ -27,4 +25,7 @@ public interface RecordMapper {
     void addRecord(Record record);
 
     void addRecords(List<Record> recordL);
+
+    Record getRecordByContestIdAndMemberIdAndProblemId(String contestId, String studentNumber, String problemSetProblemId);
+
 }

@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import lombok.Builder;
 import lombok.Data;
 import zzuli.pojo.entity.Balloon;
-import zzuli.pojo.entity.Problem;
 import zzuli.pojo.entity.School;
 
 import java.io.Serializable;

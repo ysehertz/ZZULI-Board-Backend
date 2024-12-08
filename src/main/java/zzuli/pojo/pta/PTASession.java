@@ -1,4 +1,4 @@
-package zzuli.pojo.entity;
+package zzuli.pojo.pta;
 
 import lombok.Builder;
 import lombok.Data;
@@ -17,6 +17,6 @@ import java.io.Serializable;
 @Builder
 @Data
 public class PTASession implements Serializable {
-    private String jsession;
+    private String Jsession;
     private String PTASession;
 }

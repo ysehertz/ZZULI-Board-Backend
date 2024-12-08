@@ -22,6 +22,8 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Builder
 public class MemberDTO implements Serializable {
+    private String qq;
+    private String phone;
     private String id;
     private String name;
     private String school;

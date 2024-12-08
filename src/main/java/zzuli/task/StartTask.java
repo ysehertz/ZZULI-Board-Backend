@@ -40,6 +40,7 @@ public class StartTask {
         //获取key为notBegin的map类型的所有数据
         Map<String, String> notBeginMap = redisTemplate.opsForHash().entries("notBegin");
         if(notBeginMap == null || notBeginMap.size() == 0) {
+            redisTemplate.opsForHash().put("notBegin", "PreventNotBeginReclamation", "1956175552000=956175552010");
             List<Contest> contestList  =  contestMapper.getAllContest();
             contestList.forEach(contest -> {
                 // 如果该比赛还未结束
@@ -58,7 +59,6 @@ public class StartTask {
             String startTime = parts[0];
             String endTime = parts[1];
 
-            log.info("当前时间{}",System.currentTimeMillis());
             //如果比赛开始时间小于当前时间加上5分钟
             if (Long.parseLong(startTime) <= System.currentTimeMillis() + 300000) {
                 //为要开始的比赛创建定时任务

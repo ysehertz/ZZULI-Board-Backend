@@ -28,8 +28,8 @@ public class Contest  implements Serializable {
     private String contestId;
     @JsonProperty("PTASession")
     private String PTASession;
-    @JsonProperty("jesession")
-    private String Jesession;
+    @JsonProperty("Jsession")
+    private String Jsession;
     @JsonProperty("type")
     private String contestType;
     @JsonProperty("title")

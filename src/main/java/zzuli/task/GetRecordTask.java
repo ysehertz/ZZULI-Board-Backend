@@ -4,11 +4,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import zzuli.pojo.entity.PTASession;
+import zzuli.pojo.pta.PTASession;
 import zzuli.service.ContestService;
-import zzuli.service.PTAService;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.time.LocalDateTime;
 import java.util.concurrent.Executors;
@@ -40,11 +38,12 @@ public class GetRecordTask {
        getRecord_(contestId, endTime, ptaSession.getJsession(), ptaSession.getPTASession());
     }
 
-    public void getRecord_(String contestId,java.sql.Timestamp endTime,String jsession, String ptaService) {
+    public void getRecord_(String contestId,java.sql.Timestamp endTime,String Jsession, String ptaService) {
         Runnable task = () -> {
+            log.info("获取比赛记录");
             // 如果现在的时间小于比赛结束时间再加五分钟
             if (System.currentTimeMillis() < endTime.getTime() + 3600) {
-                contestService.getRecord(contestId , jsession, ptaService);
+                contestService.getRecord(contestId , Jsession, ptaService);
             } else {
                 System.out.println("Stopping scheduled task: " + LocalDateTime.now());
                 shutdownScheduler();

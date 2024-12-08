@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.swing.*;
 import java.io.Serializable;
 
 /**
@@ -21,6 +22,8 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Member implements Serializable {
+    private String memberQq;
+    private String memberPhone;
     private int uuid;
     private String contestId;
     private int teamId;

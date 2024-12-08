@@ -61,7 +61,6 @@ public class AdminController {
 
     @GetMapping("/admin/test")
     public Result<String> test() {
-
         return Result.success(jwtProperties.getAdminTokenName());
     }
 

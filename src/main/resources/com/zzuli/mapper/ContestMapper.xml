@@ -8,12 +8,12 @@
 </insert>
 
     <insert id="saveMember">
-        insert into members (team_id, contest_id,member_id,member_name,member_school,member_college,member_class,official) values
-        (#{teamId}, #{contestId},#{memberId},#{memberName},#{memberSchool},#{memberCollege},#{memberClass},#{official});
+        insert into members (team_id, contest_id,member_id,member_name,member_school,member_college,member_class,official,member_qq,member_phone) values
+        (#{teamId}, #{contestId},#{memberId},#{memberName},#{memberSchool},#{memberCollege},#{memberClass},#{official},#{memberQq},#{memberPhone});
     </insert>
     <insert id="createContest">
-        insert into contests (contest_id, contest_type, PTASession, Jesession, title, contests.start_time,contests.end_time,reg_type,reg_start_time,reg_end_time,reg_off_code,reg_unoff_code,extra,balloon_color) values
-        (#{contestId}, #{contestType}, #{PTASession}, #{Jesession}, #{title},#{startTime},#{endTime}, #{regType}, #{regStartTime}, #{regEndTime}, #{regOffCode}, #{regUnoffCode},#{extra}, #{balloonColor});
+        insert into contests (contest_id, contest_type, PTASession, Jsession, title, contests.start_time,contests.end_time,reg_type,reg_start_time,reg_end_time,reg_off_code,reg_unoff_code,extra,balloon_color) values
+        (#{contestId}, #{contestType}, #{PTASession}, #{Jsession}, #{title},#{startTime},#{endTime}, #{regType}, #{regStartTime}, #{regEndTime}, #{regOffCode}, #{regUnoffCode},#{extra}, #{balloonColor});
     </insert>
 
     <update id="setProblemList">
@@ -23,14 +23,12 @@
     </update>
     <update id="setContest">
         update contests
-        set contest_type = #{contestType}, PTASession = #{PTASession}, Jesession = #{Jesession}, title = #{title}, reg_type = #{regType}, reg_start_time = #{regStartTime}, reg_end_time = #{regEndTime}, reg_off_code = #{regOffCode}, reg_unoff_code = #{regUnoffConde},extra = #{extra}, balloon_color = #{balloonColor}
+        set contest_type = #{contestType}, PTASession = #{PTASession}, Jsession = #{Jsession}, title = #{title}, reg_type = #{regType}, reg_start_time = #{regStartTime}, reg_end_time = #{regEndTime}, reg_off_code = #{regOffCode}, reg_unoff_code = #{regUnoffCode},extra = #{extra}, balloon_color = #{balloonColor},start_time = #{startTime} , end_time = #{endTime}
         where contest_id = #{contestId};
     </update>
     <delete id="deleteContest">
         delete from contests where contest_id = #{contestId};
     </delete>
-
-
     <select id="list" resultType="zzuli.pojo.entity.Contest">
         select * from contests;
     </select>
@@ -40,7 +38,7 @@
     <select id="getAllContest" resultType="zzuli.pojo.entity.Contest">
         select * from contests;
     </select>
-    <select id="getPTASession" resultType="zzuli.pojo.entity.PTASession">
-        select PTASession,Jesession from contests where contest_id = #{contestId};
+    <select id="getPTASession" resultType="zzuli.pojo.pta.PTASession">
+        select PTASession,Jsession from contests where contest_id = #{contestId};
     </select>
 </mapper>

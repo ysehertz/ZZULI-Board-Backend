@@ -18,8 +18,9 @@ import org.springframework.transaction.annotation.Transactional;
  * @createTime 2024/11/8
  */
 @Slf4j
-@SpringBootApplication(exclude = DataSourceAutoConfiguration.class)
+@SpringBootApplication
 @Transactional
+@MapperScan("zzuli.mapper")
 public class Application {
     public static void main(String[] args) {
         log.info("server started");

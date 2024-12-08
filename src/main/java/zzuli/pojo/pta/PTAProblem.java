@@ -1,4 +1,4 @@
-package zzuli.pojo.entity;
+package zzuli.pojo.pta;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -10,23 +10,22 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 
 /**
- * ClassName: Problem
- * Package: zzuli.pojo.entity
+ * ClassName: PTAProblem
+ * Package: zzuli.pojo.pta
  * Description:
  *
  * @author fuchen
  * @version 1.0
- * @createTime 2024/11/10
+ * @createTime 2024/11/30
  */
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Problem implements Serializable {
+public class PTAProblem implements Serializable {
     private String id;
     @JsonProperty("title")
     private String name;
     private String score;
-
 }
