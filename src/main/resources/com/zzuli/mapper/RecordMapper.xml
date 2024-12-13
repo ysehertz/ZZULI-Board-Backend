@@ -14,8 +14,17 @@
         </foreach>
     </insert>
 
+    <update id="UpRecord">
+        update records
+        set record_status = #{status}, record_score = #{score}
+        where record_id = #{id}
+    </update>
+
     <delete id="deleteAllBycontestId">
         delete from records where contest_id = #{contestId}
+    </delete>
+    <delete id="delcontestById">
+        delete from records where record_id = #{id}
     </delete>
     <select id="getNumByContestId" resultType="java.lang.Integer">
         select count(record_id) from records where contest_id = #{contestId}
@@ -25,5 +34,8 @@
     </select>
     <select id="getRecordByContestIdAndMemberIdAndProblemId" resultType="zzuli.pojo.entity.Record">
         select * from records where contest_id = #{contestId} and member_id = #{studentNumber} and problem_id = #{problemSetProblemId}
+    </select>
+    <select id="getJudingRecord" resultType="zzuli.pojo.entity.Record">
+        select * from records where contest_id = #{contestId} and record_status = "JUDGING"
     </select>
 </mapper>

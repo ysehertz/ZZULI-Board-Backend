@@ -29,10 +29,6 @@
         <Logger name="zzuli.interceptor" level="info" additivity="false">
             <AppenderRef ref="AdminFile" />
         </Logger>
-<!--        <Logger name="zzuli.task" level="info" additivity="false">-->
-<!--            <AppenderRef ref="RollingFile" />-->
-<!--            <AppenderRef ref="Console" />-->
-<!--        </Logger>-->
 
         <Root level="info">
             <AppenderRef ref="Console" />

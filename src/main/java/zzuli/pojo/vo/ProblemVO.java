@@ -24,6 +24,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ProblemVO implements Serializable {
+    private String label;
     private String id;
     private String name;
     private String score;

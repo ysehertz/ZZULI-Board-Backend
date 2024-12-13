@@ -118,4 +118,29 @@ public class ContestController {
         log.info("修改比赛成功;管理员：{}，比赛名：{}",BaseContext.getCurrentId(),contestId);
         return Result.success(null);
     }
+
+    /**
+     * 重新启动获取记录线程
+     * @param contestId
+     * @return
+     */
+    @PostMapping("/flush")
+    public Result<Integer> flushContest(@RequestParam(name = "contest_id") String contestId){
+        log.info("重新获取比赛信息;管理员：{}，比赛名：{}",BaseContext.getCurrentId(), contestId);
+        contestService.flushContest(contestId);
+        return Result.success(null);
+    }
+
+    /**
+     * 重新获取比赛题目
+     * @param contestId
+     * @return
+     */
+    @PostMapping("/flushProblem")
+    public Result<Integer> flushProblem(@RequestParam(name = "contest_id") String contestId){
+        log.info("重新获取比赛题目;管理员：{}，比赛名：{}",BaseContext.getCurrentId(), contestId);
+        contestService.flushProblem(contestId);
+        return Result.success(null);
+    }
+
 }

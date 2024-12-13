@@ -1,13 +1,13 @@
 board:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    host: 192.168.200.130
+    host: 192.168.50.128
     port: 3306
-    database: test
+    database: zzuli_board
     username: root
-    password: '01010111'
+    password: 123456
   redis:
-    host: 192.168.200.130
+    host: 192.168.50.128
     port: 6379
     database: 2
-    password: ""
+    password: 123456

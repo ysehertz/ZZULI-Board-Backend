@@ -28,4 +28,9 @@ public interface RecordMapper {
 
     Record getRecordByContestIdAndMemberIdAndProblemId(String contestId, String studentNumber, String problemSetProblemId);
 
+    void delcontestById(String id);
+
+    void UpRecord(Record record);
+
+    List<Record> getJudingRecord(String contestId);
 }

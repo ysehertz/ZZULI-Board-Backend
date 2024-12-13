@@ -25,6 +25,7 @@ import java.io.Serializable;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PTAProblem implements Serializable {
     private String id;
+    private String label;
     @JsonProperty("title")
     private String name;
     private String score;

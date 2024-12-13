@@ -2,6 +2,7 @@ package zzuli.service.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jdk.jshell.Snippet;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -12,6 +13,7 @@ import zzuli.utils.HttpClientUtil;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * ClassName: PTAServiceImpl
@@ -43,7 +45,7 @@ public class PTAServiceImpl implements PTAService {
         paramMap.put("page", "0");
         paramMap.put("limit","100");
         Map<String, String> headerMap = new HashMap<>();
-        headerMap.put("Cookie", "JSESSIONID="+Jsession+";"+"PTASession="+PTASession);
+        headerMap.put("Cookie", "JSESSIONID="+UUID.randomUUID().toString().replace("-", "").toUpperCase()+";"+"PTASession="+PTASession);
         headerMap.put("Accept-Encoding","gzip, deflate, br, zstd");
         headerMap.put("Accept","application/json;charset=UTF-8");
         String result = HttpClientUtil.doGet(url, paramMap, headerMap);
@@ -65,12 +67,12 @@ public class PTAServiceImpl implements PTAService {
         paramMap.put("limit","200");
         paramMap.put("page",page);
         Map<String, String> headerMap = new HashMap<>();
-        headerMap.put("Cookie", "JSESSIONID="+Jsession+";"+"PTASession="+PTASession);
+        headerMap.put("Cookie", "JSESSIONID="+ UUID.randomUUID().toString().replace("-", "").toUpperCase()+";"+"PTASession="+PTASession);
         headerMap.put("Accept-Encoding","gzip, deflate, br, zstd");
         headerMap.put("Accept","application/json;charset=UTF-8");
 
         String result = HttpClientUtil.doGet(url, paramMap, headerMap);
-        if(result == null){
+        if(result == null || result.isEmpty()){
             log.error("访问PTA失败，不能成功获取考生学号与ptaId的对应关系");
         }
         return  result;
@@ -91,17 +93,30 @@ public class PTAServiceImpl implements PTAService {
         paramMap.put("limit","200");
         paramMap.put("before",before);
         Map<String, String> headerMap = new HashMap<>();
-        headerMap.put("Cookie", "JSESSIONID="+Jsession+";"+"PTASession="+ptaSession);
+        headerMap.put("Cookie", "JSESSIONID="+UUID.randomUUID().toString().replace("-", "").toUpperCase()+";"+"PTASession="+ptaSession);
         headerMap.put("Accept-Encoding","gzip, deflate, br, zstd");
         headerMap.put("Accept","application/json;charset=UTF-8");
 
 
         String result = HttpClientUtil.doGet(url, paramMap, headerMap);
-        if(result == null){
+        if(result == null || result.isEmpty() ){
             log.error("访问PTA失败，不能成功更新评测记录");
         }
         return  result;
     }
 
-
+    @Override
+    public String UpRecordById(String id, String jsession, String ptaSession) {
+        String url = "https://pintia.cn/api/submissions/"+id;
+        Map<String, String> paramMap = new HashMap<>();
+        Map<String, String> headerMap = new HashMap<>();
+        headerMap.put("Cookie", "JSESSIONID="+UUID.randomUUID().toString().replace("-", "").toUpperCase()+"; "+"PTASession="+ptaSession);
+        headerMap.put("Accept-Encoding","gzip, deflate, br, zstd");
+        headerMap.put("Accept","application/json;charset=UTF-8");
+        String result = HttpClientUtil.doGet(url, paramMap, headerMap);
+        if(result == null || result.isEmpty()){
+            log.error("访问PTA失败，不能成功更新评测记录(原始记录为测评中)");
+        }
+        return  result;
+    }
 }

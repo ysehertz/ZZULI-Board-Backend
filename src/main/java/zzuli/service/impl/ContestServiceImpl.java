@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import zzuli.common.Context.Judging;
 import zzuli.common.constant.MessageConstant;
 import zzuli.common.exception.BaseException;
 import zzuli.common.exception.NoContestException;
@@ -25,6 +26,7 @@ import zzuli.pojo.pta.PTASession;
 import zzuli.pojo.vo.*;
 import zzuli.service.ContestService;
 import zzuli.service.PTAService;
+import zzuli.task.GetRecordTask;
 
 import java.sql.Timestamp;
 import java.util.*;
@@ -43,6 +45,8 @@ import java.util.stream.Collectors;
 @Service
 public class ContestServiceImpl implements ContestService {
     @Autowired
+    private  GetRecordTask getRecordTask;
+    @Autowired
     private RecordMapper recordMapper;
     @Autowired
     private PTAService ptaService;
@@ -52,6 +56,7 @@ public class ContestServiceImpl implements ContestService {
     private RedisTemplate redisTemplate;
     @Autowired
     private ContestMapper contestMapper;
+
     /**
      * 获取比赛列表
      * @return
@@ -104,6 +109,7 @@ public class ContestServiceImpl implements ContestService {
             List<ProblemVO> problemList = ptaProblems.stream().map(ptaProblem -> ProblemVO.builder()
                     .id(ptaProblem.getId())
                     .score(ptaProblem.getScore())
+                    .label(ptaProblem.getLabel())
                     .name(ptaProblem.getName())
                     .build()).collect(Collectors.toList());
             return ContestVO.builder()
@@ -230,18 +236,10 @@ public class ContestServiceImpl implements ContestService {
                 // 获取key对应的value
                 Map<Object, Object> values = redisTemplate.opsForHash().entries(key);
                 // 检查 score 是否为 null，并提供默认值
-                String scoreStr = (String) values.get("score");
+                Integer scoreStr = (Integer) values.get("score");
                 Integer score =  0; // 默认值为 0
                 if (scoreStr != null) {
-                    try {
-                        // 尝试将字符串转换为 Double
-                        double scoreDouble = Double.parseDouble(scoreStr);
-                        // 将 Double 转换为 Integer
-                        score = (int) scoreDouble;
-                    } catch (NumberFormatException e) {
-                        // 处理转换失败的情况
-                        score = 0;
-                    }
+                    score = scoreStr;
                 }
                 teamList.add(RecordVO.builder()
                         .record_id((String) values.get("record_id"))
@@ -434,6 +432,7 @@ public class ContestServiceImpl implements ContestService {
                List<PTAProblem> problemList = objectMapper.readValue(data.toString(), new TypeReference<List<PTAProblem>>() {});
                List<ProblemVO> problemVOS =problemList.stream().map(problem -> ProblemVO.builder()
                        .id(problem.getId())
+                       .label(problem.getLabel())
                        .score(problem.getScore())
                        .name(problem.getName())
                        .build()).collect(Collectors.toList());
@@ -487,7 +486,6 @@ public class ContestServiceImpl implements ContestService {
             recordTab = "0";
             recordMapper.deleteAllBycontestId(contestId);
         }
-        Map<String,String> paramMap = new HashMap<>();
         String before = "0";
         String result = ptaService.getRecord(contestId, Jsession, PTASession, before);
 
@@ -510,13 +508,16 @@ public class ContestServiceImpl implements ContestService {
                     if(size != 0){
                         before = recordList.get(size-1).getId();
                         for(Record record : recordList){
+                            if(firstLab == 1){
+                                redisTemplate.opsForValue().set("R"+contestId, record.getId());
+                                firstLab = 0;
+                            }
                             if( recordTab.equals(record.getId())){
                                 flag = false;
                                 break;
                             }
-                            if(firstLab == 1){
-                                redisTemplate.opsForValue().set("R"+contestId, record.getId());
-                                firstLab = 0;
+                            if(record.getStatus().equals("JUDGING")){
+                                Judging.JUDGING.add(record.getId());
                             }
                             //获取redis中S+考场ID的map类型中key为record.getUserId()的value
                             String studentNumber = (String) redisTemplate.opsForHash().get("S"+contestId, record.getUserId());
@@ -544,8 +545,52 @@ public class ContestServiceImpl implements ContestService {
                 }
             }
         }
+        if(Judging.JUDGING.size() != 0){
+            for(String id : Judging.JUDGING){
+                result = ptaService.UpRecordById(id,Jsession, PTASession);
+                JsonNode rootNode = null;
+                try {
+                    rootNode = objectMapper.readTree(result);
+                    JsonNode addressNode = rootNode.path("submission");
+                    Record record = objectMapper.readValue(addressNode.toString(), Record.class);
+                    //获取redis中S+考场ID的map类型中key为record.getUserId()的value
+                    String studentNumber = (String) redisTemplate.opsForHash().get("S"+contestId, record.getUserId());
+                    record.setMemberId(studentNumber);
+                    record.setContestId(contestId);
+                    if(contest.getContestType().equals("gplt")) {
+                        Judging.JUDGING.remove(id);
+                        Integer oldScore = (Integer) redisTemplate.opsForHash().get("C"+contestId+":"+studentNumber+":"+record.getProblemSetProblemId(), "score");
+                        if(oldScore == null){
+                            upRecord(record);
+                        }else if(record.getScore() >= oldScore ){
+                            upRecord(record);
+                        }else {
+                            recordMapper.UpRecord(record);
+                        }
+                    }else {
+                        upRecord(record);
+                    }
+                } catch (JsonProcessingException e) {
+                    log.info(e.getMessage());
+                }
+            }
+        }
     }
 
+    private void upRecord(Record record){
+        recordMapper.UpRecord(record);
+        // 将数据存到redis当中
+        Map<String, Object> KVMap = new HashMap<>();
+        KVMap.put("record_id", record.getId());
+        KVMap.put("member_id", record.getMemberId());
+        KVMap.put("problem_id", record.getProblemSetProblemId());
+        KVMap.put("status", record.getStatus());
+        KVMap.put("score", record.getScore());
+        KVMap.put("language", record.getCompiler());
+        KVMap.put("submit_time", record.getSubmitAt());
+        KVMap.put("balloon", false);
+        redisTemplate.opsForHash().putAll("C"+record.getContestId()+":"+record.getMemberId()+":"+record.getProblemSetProblemId(), KVMap);
+    }
     private void updateRecord(Record record){
         recordMapper.addRecord(record);
         // 将数据存到redis当中
@@ -675,6 +720,27 @@ public class ContestServiceImpl implements ContestService {
             UpContest(dto.getId(),dto.getJsession(),dto.getPTASession());
             getRecord(dto.getId(),dto.getJsession(),dto.getPTASession());
         }).start();
+    }
+
+    @Override
+    public void flushContest(String contestId) {
+        Contest contest = contestMapper.getContestById(contestId);
+        if(contest != null){
+            recordMapper.getJudingRecord(contestId).forEach(record -> {
+                    Judging.JUDGING.add(record.getId());
+            });
+            if(contest.getEndTime().getTime() >= System.currentTimeMillis() ){
+                getRecordTask.getRecord(contestId,contest.getEndTime());
+            }
+        }
+    }
+
+    @Override
+    public void flushProblem(String contestId) {
+        Contest contest = contestMapper.getContestById(contestId);
+        if(contest != null){
+            UpContest(contestId,contest.getJsession(),contest.getPTASession());
+        }
     }
 
 }

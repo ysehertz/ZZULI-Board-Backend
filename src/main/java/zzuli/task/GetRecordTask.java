@@ -8,6 +8,7 @@ import zzuli.pojo.pta.PTASession;
 import zzuli.service.ContestService;
 
 import javax.annotation.PreDestroy;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -43,13 +44,19 @@ public class GetRecordTask {
             log.info("获取比赛记录");
             // 如果现在的时间小于比赛结束时间再加五分钟
             if (System.currentTimeMillis() < endTime.getTime() + 3600) {
-                contestService.getRecord(contestId , Jsession, ptaService);
+                getRecord__(contestId, Jsession, ptaService);
             } else {
-                System.out.println("Stopping scheduled task: " + LocalDateTime.now());
+                log.info("比赛结束，停止获取比赛记录,比赛id:{}", contestId);
                 shutdownScheduler();
             }
         };
         scheduler.scheduleAtFixedRate(task, 0, period, TimeUnit.SECONDS);
+    }
+    // 异步获取比赛记录
+    public void getRecord__(String contestId,String Jsession, String ptaService) {
+        new Thread(() -> {
+            contestService.getRecord(contestId , Jsession, ptaService);
+        }).start();
     }
 
     @PreDestroy

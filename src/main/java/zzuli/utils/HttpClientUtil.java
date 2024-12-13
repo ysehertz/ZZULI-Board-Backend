@@ -1,6 +1,7 @@
 package zzuli.utils;
 
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
@@ -16,6 +17,7 @@ import java.util.Map;
 /**
  * Http工具类
  */
+@Slf4j
 public class HttpClientUtil {
 
     static final  int TIMEOUT_MSEC = 5 * 1000;
@@ -45,23 +47,27 @@ public class HttpClientUtil {
             //创建GET请求
             HttpGet httpGet = new HttpGet(uri.toString());
 
+            //设置cookie
+
             //设置请求头
             if(Header != null){
                 for (String key : Header.keySet()) {
                     httpGet.setHeader(key,Header.get(key));
                 }
             }
+            log.info("请求地址：{}",uri.toString());
             //发送请求
             response = httpClient.execute(httpGet);
 
+//            log.info("请求状态码：{}",response.getStatusLine().getStatusCode());
             //判断响应状态
             if(response.getStatusLine().getStatusCode() == 200){
                 result = EntityUtils.toString(response.getEntity(),"UTF-8");
             }else {
-                new RuntimeException(MessageConstant.CALL_PTA_ERROR);
+                log.info("请求失败");
             }
         }catch (Exception e){
-            e.printStackTrace();
+            log.error("发送GET请求失败",e);
         }finally {
             try {
                 response.close();
@@ -73,7 +79,4 @@ public class HttpClientUtil {
 
         return result;
     }
-
-
-
 }

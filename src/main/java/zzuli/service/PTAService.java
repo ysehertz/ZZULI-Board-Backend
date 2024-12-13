@@ -21,5 +21,5 @@ public interface PTAService {
     String getRecord(String contestId, String Jsession, String ptaSession, String before);
 
 
-
+    String UpRecordById(String id, String jsession, String ptaSession);
 }

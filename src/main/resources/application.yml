@@ -50,7 +50,7 @@ zzuli:
 
 task:
   frequency:
-    getRecord: 2
+    getRecord: 5
     start: 120
 
 

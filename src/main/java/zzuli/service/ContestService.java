@@ -56,4 +56,8 @@ public interface ContestService {
     void getRecordAsync(String id, String Jsession, String ptaSession);
 
     void UpContestAsync(CreateContestDTO dto);
+
+    void flushContest(String contestId);
+
+    void flushProblem(String contestId);
 }
