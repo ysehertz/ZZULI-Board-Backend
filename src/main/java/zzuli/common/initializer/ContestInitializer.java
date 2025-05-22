@@ -47,10 +47,12 @@ public class ContestInitializer {
     public void init() {
         contestMapper.getAllContest().forEach(contest -> {
             if(contest.getEndTime().getTime() > System.currentTimeMillis() && contest.getStartTime().getTime() < System.currentTimeMillis()) {
-                recordMapper.getJudingRecord(contest.getContestId()).forEach(record -> {
-                    Judging.JUDGING.add(record.getId());
-                });
                 getRecordTask.getRecord(contest.getContestId(), contest.getEndTime());
+                recordMapper.getJudingRecord(contest.getContestId()).forEach(record -> {
+                    if("JUDGING".equals(record.getStatus())) {
+                        Judging.JUDGING.add(record.getId());
+                    }
+                });
             }
         });
     }

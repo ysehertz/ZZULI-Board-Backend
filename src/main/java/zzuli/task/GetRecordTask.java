@@ -44,7 +44,7 @@ public class GetRecordTask {
             log.info("获取比赛记录");
             // 如果现在的时间小于比赛结束时间再加五分钟
             if (System.currentTimeMillis() < endTime.getTime() + 3600) {
-                getRecord__(contestId, Jsession, ptaService);
+                contestService.getRecord(contestId , Jsession, ptaService);
             } else {
                 log.info("比赛结束，停止获取比赛记录,比赛id:{}", contestId);
                 shutdownScheduler();

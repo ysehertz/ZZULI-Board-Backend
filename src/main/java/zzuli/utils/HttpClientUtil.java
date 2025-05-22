@@ -55,7 +55,7 @@ public class HttpClientUtil {
                     httpGet.setHeader(key,Header.get(key));
                 }
             }
-            log.info("请求地址：{}",uri.toString());
+//            log.info("请求地址：{}",uri.toString());
             //发送请求
             response = httpClient.execute(httpGet);
 
@@ -73,7 +73,7 @@ public class HttpClientUtil {
                 response.close();
                 httpClient.close();
             } catch (IOException e) {
-                e.printStackTrace();
+                log.error("关闭资源失败",e);
             }
         }
 

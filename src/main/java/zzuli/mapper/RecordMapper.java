@@ -33,4 +33,6 @@ public interface RecordMapper {
     void UpRecord(Record record);
 
     List<Record> getJudingRecord(String contestId);
+
+    String getContest(String id);
 }

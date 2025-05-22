@@ -1,9 +1,9 @@
 #spring:
 #  config:
 #    import: optional:file:./external-config.yml
-server:
-  port: 9875
-
+#server:
+#  port: 9875
+#
 spring:
   profiles:
     active: dev
@@ -30,12 +30,12 @@ mybatis:
     map-underscore-to-camel-case: true
 
 
-
-
 logging:
   config: classpath:log4j2.xml
 #  level:
-#    zzuli:
+#    zzuli:#
+#
+#
 #      mapper: debug
 
 

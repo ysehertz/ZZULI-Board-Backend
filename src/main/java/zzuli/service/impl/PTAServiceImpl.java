@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import zzuli.pojo.dto.CreateContestDTO;
 import zzuli.service.PTAService;
 import zzuli.utils.HttpClientUtil;
+import zzuli.utils.CacheService;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,7 +29,7 @@ import java.util.UUID;
 @Slf4j
 public class PTAServiceImpl implements PTAService {
     @Autowired
-    private RedisTemplate redisTemplate;
+    private CacheService cacheService;
 
     /**
      * 获取题目列表

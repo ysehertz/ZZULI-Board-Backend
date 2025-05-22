@@ -38,4 +38,7 @@
     <select id="getJudingRecord" resultType="zzuli.pojo.entity.Record">
         select * from records where contest_id = #{contestId} and record_status = "JUDGING"
     </select>
+    <select id="getContest" resultType="java.lang.String">
+        select contest_id from records where record_id = #{id}
+    </select>
 </mapper>

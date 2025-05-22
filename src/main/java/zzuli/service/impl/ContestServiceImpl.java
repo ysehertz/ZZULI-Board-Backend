@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import zzuli.common.Context.Judging;
 import zzuli.common.constant.MessageConstant;
@@ -27,6 +26,7 @@ import zzuli.pojo.vo.*;
 import zzuli.service.ContestService;
 import zzuli.service.PTAService;
 import zzuli.task.GetRecordTask;
+import zzuli.utils.CacheService;
 
 import java.sql.Timestamp;
 import java.util.*;
@@ -53,9 +53,9 @@ public class ContestServiceImpl implements ContestService {
     @Autowired
     private ObjectMapper objectMapper;
     @Autowired
-    private RedisTemplate redisTemplate;
-    @Autowired
     private ContestMapper contestMapper;
+    @Autowired
+    private CacheService cacheService;
 
     /**
      * 获取比赛列表
@@ -139,7 +139,7 @@ public class ContestServiceImpl implements ContestService {
         Contest contest = contestMapper.getContestById(contestId);
         String type = contest.getContestType();
         //redis模糊查询含该比赛记录的key
-        Set<String> keys = redisTemplate.keys("C"+contestId+":*");
+        Set<String> keys = cacheService.entriesKeys("C"+contestId+":*");
         List<RecordVO> teamList = new ArrayList<>();
         if(type.equals("ccpc")){
             // 获取现在时间的时间戳
@@ -158,7 +158,7 @@ public class ContestServiceImpl implements ContestService {
                 // 遍历哈希keys
                 for(String key : keys ){
                     // 获取key对应的value
-                    Map<Object, Object> values = redisTemplate.opsForHash().entries(key);
+                    Map<Object, Object> values = cacheService.entries(key);
                     // 检查 score 是否为 null，并提供默认值
                     String scoreStr = (String) values.get("score");
                     Integer score =  0; // 默认值为 0
@@ -202,7 +202,7 @@ public class ContestServiceImpl implements ContestService {
                 // 遍历哈希keys
                 for(String key : keys ){
                     // 获取key对应的value
-                    Map<Object, Object> values = redisTemplate.opsForHash().entries(key);
+                    Map<Object, Object> values = cacheService.entries(key);
                     // 检查 score 是否为 null，并提供默认值
                     String scoreStr = (String) values.get("score");
                     Integer score =  0; // 默认值为 0
@@ -234,7 +234,7 @@ public class ContestServiceImpl implements ContestService {
             // 遍历哈希keys
             for(String key : keys ){
                 // 获取key对应的value
-                Map<Object, Object> values = redisTemplate.opsForHash().entries(key);
+                Map<Object, Object> values = cacheService.entries(key);
                 // 检查 score 是否为 null，并提供默认值
                 Integer scoreStr = (Integer) values.get("score");
                 Integer score =  0; // 默认值为 0
@@ -376,7 +376,7 @@ public class ContestServiceImpl implements ContestService {
         contestMapper.createContest(contest);
 
         if(dto.getEnd_time().toEpochMilli()> System.currentTimeMillis()){
-            redisTemplate.opsForHash().put("notBegin", dto.getId(), contest.getStartTime().getTime()+"="+contest.getEndTime().getTime());
+            cacheService.put("notBegin", dto.getId(), contest.getStartTime().getTime()+"="+contest.getEndTime().getTime());
         }
     }
 
@@ -463,7 +463,7 @@ public class ContestServiceImpl implements ContestService {
                        String studentNumber = node.get("studentUser").get("studentNumber").asText();
                        String id = node.get("user").get("id").asText();
                        //存到redis的map中，key为S+考场ID，value为studentNumber对应id
-                       redisTemplate.opsForHash().put("S"+contestId,id, studentNumber);
+                       cacheService.put("S"+contestId, id, studentNumber);
                    }
                }while ((total -= 200) > 0);
            } catch (Exception e) {
@@ -481,7 +481,8 @@ public class ContestServiceImpl implements ContestService {
     @Override
     public void getRecord(String contestId, String Jsession, String PTASession) {
         Contest contest = contestMapper.getContestById(contestId);
-        String recordTab = (String)redisTemplate.opsForValue().getAndSet("R"+contestId, "0");
+        String recordTab = (String)cacheService.get("R"+contestId);
+        cacheService.put("R"+contestId, "0");
         if(recordTab == null || recordTab.equals("0")){
             recordTab = "0";
             recordMapper.deleteAllBycontestId(contestId);
@@ -509,7 +510,7 @@ public class ContestServiceImpl implements ContestService {
                         before = recordList.get(size-1).getId();
                         for(Record record : recordList){
                             if(firstLab == 1){
-                                redisTemplate.opsForValue().set("R"+contestId, record.getId());
+                                cacheService.put("R"+contestId, record.getId());
                                 firstLab = 0;
                             }
                             if( recordTab.equals(record.getId())){
@@ -520,11 +521,11 @@ public class ContestServiceImpl implements ContestService {
                                 Judging.JUDGING.add(record.getId());
                             }
                             //获取redis中S+考场ID的map类型中key为record.getUserId()的value
-                            String studentNumber = (String) redisTemplate.opsForHash().get("S"+contestId, record.getUserId());
+                            String studentNumber = (String) cacheService.get("S"+contestId, record.getUserId());
                             record.setMemberId(studentNumber);
                             record.setContestId(contestId);
                             if(contest.getContestType().equals("gplt")) {
-                                Integer oldScore = (Integer) redisTemplate.opsForHash().get("C"+contestId+":"+studentNumber+":"+record.getProblemSetProblemId(), "score");
+                                Integer oldScore = (Integer) cacheService.get("C"+contestId+":"+studentNumber+":"+record.getProblemSetProblemId(), "score");
                                 if(oldScore == null){
                                     updateRecord(record);
                                 }else if(record.getScore() >= oldScore ){
@@ -545,52 +546,14 @@ public class ContestServiceImpl implements ContestService {
                 }
             }
         }
-        if(Judging.JUDGING.size() != 0){
-            for(String id : Judging.JUDGING){
-                result = ptaService.UpRecordById(id,Jsession, PTASession);
-                JsonNode rootNode = null;
-                try {
-                    rootNode = objectMapper.readTree(result);
-                    JsonNode addressNode = rootNode.path("submission");
-                    Record record = objectMapper.readValue(addressNode.toString(), Record.class);
-                    //获取redis中S+考场ID的map类型中key为record.getUserId()的value
-                    String studentNumber = (String) redisTemplate.opsForHash().get("S"+contestId, record.getUserId());
-                    record.setMemberId(studentNumber);
-                    record.setContestId(contestId);
-                    if(contest.getContestType().equals("gplt")) {
-                        Judging.JUDGING.remove(id);
-                        Integer oldScore = (Integer) redisTemplate.opsForHash().get("C"+contestId+":"+studentNumber+":"+record.getProblemSetProblemId(), "score");
-                        if(oldScore == null){
-                            upRecord(record);
-                        }else if(record.getScore() >= oldScore ){
-                            upRecord(record);
-                        }else {
-                            recordMapper.UpRecord(record);
-                        }
-                    }else {
-                        upRecord(record);
-                    }
-                } catch (JsonProcessingException e) {
-                    log.info(e.getMessage());
-                }
-            }
-        }
+
     }
 
-    private void upRecord(Record record){
-        recordMapper.UpRecord(record);
-        // 将数据存到redis当中
-        Map<String, Object> KVMap = new HashMap<>();
-        KVMap.put("record_id", record.getId());
-        KVMap.put("member_id", record.getMemberId());
-        KVMap.put("problem_id", record.getProblemSetProblemId());
-        KVMap.put("status", record.getStatus());
-        KVMap.put("score", record.getScore());
-        KVMap.put("language", record.getCompiler());
-        KVMap.put("submit_time", record.getSubmitAt());
-        KVMap.put("balloon", false);
-        redisTemplate.opsForHash().putAll("C"+record.getContestId()+":"+record.getMemberId()+":"+record.getProblemSetProblemId(), KVMap);
-    }
+
+    /**
+     * 存储新的评测记录
+     * @param record
+     */
     private void updateRecord(Record record){
         recordMapper.addRecord(record);
         // 将数据存到redis当中
@@ -603,7 +566,7 @@ public class ContestServiceImpl implements ContestService {
         KVMap.put("language", record.getCompiler());
         KVMap.put("submit_time", record.getSubmitAt());
         KVMap.put("balloon", false);
-        redisTemplate.opsForHash().putAll("C"+record.getContestId()+":"+record.getMemberId()+":"+record.getProblemSetProblemId(), KVMap);
+        cacheService.putAll("C"+record.getContestId()+":"+record.getMemberId()+":"+record.getProblemSetProblemId(), KVMap);
     }
 
     /**
@@ -616,7 +579,7 @@ public class ContestServiceImpl implements ContestService {
         // 获取mysql数据数
         int num = recordMapper.getNumByContestId(contestId);
         // 获取redis数据数
-        Set<String> keys = redisTemplate.keys("C"+contestId+":*");
+        Set<String> keys = cacheService.entriesKeys("C"+contestId+":*");
         if(num != keys.size()){
             // 将mysql中的数据同步到redis
             List<Record> recordList = recordMapper.getRecordByContestId(contestId);
@@ -630,7 +593,7 @@ public class ContestServiceImpl implements ContestService {
                 KVMap.put("language", record.getCompiler());
                 KVMap.put("submit_time", record.getSubmitAt());
                 KVMap.put("balloon", false);
-                redisTemplate.opsForHash().putAll("C"+contestId+":"+record.getMemberId()+":"+record.getProblemSetProblemId(), KVMap);
+                cacheService.putAll("C"+record.getContestId()+":"+record.getMemberId()+":"+record.getProblemSetProblemId(), KVMap);
             }
         }
     }
@@ -695,10 +658,13 @@ public class ContestServiceImpl implements ContestService {
     @Override
     public void deleteRecordByContestID(String contestId) {
         recordMapper.deleteAllBycontestId(contestId);
-        redisTemplate.keys("C"+contestId+":*").forEach(key -> redisTemplate.delete(key));
-        redisTemplate.opsForHash().delete("notBegin", contestId);
-        redisTemplate.delete("R"+contestId);
-        redisTemplate.delete("S"+contestId);
+        Set<String> keys = cacheService.entriesKeys("C"+contestId+":*");
+        for(String key : keys) {
+            cacheService.evict(key);
+        }
+        cacheService.evict("notBegin", contestId);
+        cacheService.evict("R"+contestId);
+        cacheService.evict("S"+contestId);
     }
 
     /**

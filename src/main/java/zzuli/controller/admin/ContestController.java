@@ -6,11 +6,11 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.jdbc.Null;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import zzuli.common.Context.BaseContext;
 import zzuli.common.result.Result;
+import zzuli.mapper.ContestMapper;
 import zzuli.pojo.dto.CreateContestDTO;
 import zzuli.pojo.entity.Contest;
 import zzuli.pojo.entity.Team;
@@ -21,6 +21,7 @@ import zzuli.service.MemberService;
 import zzuli.service.RoomService;
 import zzuli.service.TeamService;
 
+import java.sql.Timestamp;
 import java.time.Instant;
 
 /**
@@ -40,6 +41,8 @@ import java.time.Instant;
 @RequestMapping("/api/admin/contest")
 @Slf4j
 public class ContestController {
+    @Autowired
+    private ContestMapper contestMapper;
 
     @Autowired
     private TeamService teamService;
@@ -127,7 +130,14 @@ public class ContestController {
     @PostMapping("/flush")
     public Result<Integer> flushContest(@RequestParam(name = "contest_id") String contestId){
         log.info("重新获取比赛信息;管理员：{}，比赛名：{}",BaseContext.getCurrentId(), contestId);
-        contestService.flushContest(contestId);
+        Contest contest = contestMapper.getContestById(contestId);
+        // 如果比赛已经结束
+        Timestamp endTime =  contestMapper.getContestById(contestId).getEndTime();
+        if (endTime.getTime() < Instant.now().toEpochMilli()){
+            contestService.getRecord(contestId,contest.getJsession(),contest.getPTASession());
+        }else {
+            contestService.flushContest(contestId);
+        }
         return Result.success(null);
     }
 
