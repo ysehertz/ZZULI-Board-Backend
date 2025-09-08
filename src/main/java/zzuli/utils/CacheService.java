@@ -30,7 +30,7 @@ public class CacheService {
 
     public Object get(String key) {
         Object value = localCache.getIfPresent(key);
-        if (value != null) {
+        if (value != null) { 
             return value;
         }
         value = redisTemplate.opsForValue().get(key);
@@ -97,5 +97,63 @@ public class CacheService {
     // 根据key模式获取所有匹配的key集合
     public java.util.Set<String> entriesKeys(String pattern) {
         return redisTemplate.keys(pattern);
+    }
+
+    /**
+     * 使用Redis管道进行批量操作优化
+     * 适用场景：批量数据同步、大量缓存更新等
+     */
+    public void batchPutAllWithPipeline(java.util.Map<String, java.util.Map<String, Object>> batchData) {
+        redisTemplate.executePipelined((org.springframework.data.redis.core.RedisCallback<Object>) connection -> {
+            for (java.util.Map.Entry<String, java.util.Map<String, Object>> entry : batchData.entrySet()) {
+                String key = entry.getKey();
+                java.util.Map<String, Object> hashData = entry.getValue();
+                
+                // 使用原生连接进行批量hash操作
+                for (java.util.Map.Entry<String, Object> hashEntry : hashData.entrySet()) {
+                    connection.hSet(
+                        key.getBytes(), 
+                        hashEntry.getKey().getBytes(), 
+                        ((org.springframework.data.redis.serializer.RedisSerializer<Object>)redisTemplate.getValueSerializer()).serialize(hashEntry.getValue())
+                    );
+                }
+            }
+            return null;
+        });
+    }
+
+    /**
+     * 批量删除优化 - 使用管道
+     */
+    public void batchDelete(java.util.List<String> keys) {
+        if (keys.isEmpty()) return;
+        
+        redisTemplate.executePipelined((org.springframework.data.redis.core.RedisCallback<Object>) connection -> {
+            for (String key : keys) {
+                connection.del(key.getBytes());
+                // 同时清理本地缓存
+                localCache.invalidate(key);
+            }
+            return null;
+        });
+    }
+
+    /**
+     * 批量设置 - 使用管道
+     */
+    public void batchSet(java.util.Map<String, Object> keyValuePairs) {
+        if (keyValuePairs.isEmpty()) return;
+        
+        redisTemplate.executePipelined((org.springframework.data.redis.core.RedisCallback<Object>) connection -> {
+            for (java.util.Map.Entry<String, Object> entry : keyValuePairs.entrySet()) {
+                connection.set(
+                    entry.getKey().getBytes(),
+                    ((org.springframework.data.redis.serializer.RedisSerializer<Object>)redisTemplate.getValueSerializer()).serialize(entry.getValue())
+                );
+                // 更新本地缓存
+                localCache.put(entry.getKey(), entry.getValue());
+            }
+            return null;
+        });
     }
 } 

@@ -2,6 +2,7 @@ package zzuli.task;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import zzuli.pojo.pta.PTASession;
@@ -10,6 +11,7 @@ import zzuli.service.ContestService;
 import javax.annotation.PreDestroy;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -31,6 +33,10 @@ public class GetRecordTask {
     private ContestService contestService;
     @Value("${task.frequency.getRecord}")
     private int period;
+    
+    @Autowired
+    @Qualifier("asyncTaskExecutor")
+    private Executor asyncTaskExecutor;
 
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
@@ -54,9 +60,9 @@ public class GetRecordTask {
     }
     // 异步获取比赛记录
     public void getRecord__(String contestId,String Jsession, String ptaService) {
-        new Thread(() -> {
+        asyncTaskExecutor.execute(() -> {
             contestService.getRecord(contestId , Jsession, ptaService);
-        }).start();
+        });
     }
 
     @PreDestroy

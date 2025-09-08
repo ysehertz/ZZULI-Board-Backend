@@ -5,7 +5,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.CacheManager;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -50,6 +52,10 @@ public class StartTask {
     private RedisTemplate redisTemplate;
     @Autowired
     private CacheService cacheService;
+    
+    @Autowired
+    @Qualifier("recordCacheManager")
+    private CacheManager recordCacheManager;
 
     // 检查是否有比赛将要开始，为要开始的比赛创建任务
     @Scheduled(cron = "0/${task.frequency.start} * * * * ? ")
@@ -145,6 +151,9 @@ public class StartTask {
         KVMap.put("submit_time", record.getSubmitAt());
         KVMap.put("balloon", false);
         cacheService.putAll("C"+record.getContestId()+":"+record.getMemberId()+":"+record.getProblemSetProblemId(), KVMap);
+        
+        // 清除对应比赛的记录缓存
+        recordCacheManager.getCache("contestRecord").evict(record.getContestId());
     }
 
 }

@@ -53,7 +53,6 @@ public class ClassServiceImpl implements ClassService {
     @Override
     public void deleteClass(int classId) {
         classMapper.deleteClass(classId);
-        collageMapper.deleteCollageByClassId(classId);
     }
 
     @Override
